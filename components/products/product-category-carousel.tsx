@@ -128,7 +128,7 @@ export function ProductCategoryCarousel({
                           />
                         </div>
 
-                        <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
+                        <h3 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">
                           {product.name}
                         </h3>
 
@@ -153,7 +153,7 @@ export function ProductCategoryCarousel({
                         <span>Código: 213131313</span>
                       </div>
 
-                      <div className="flex space-x-1 mt-2">
+                      <div className="flex space-x-1 mt-1">
                         <ProductQuantity
                           productId={product.id}
                           quantity={quantity}

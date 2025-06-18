@@ -26,7 +26,7 @@ export function ProductQuantity({
   }
 
   return (
-    <div className="flex gap-4 p-2 border rounded-sm items-center flex-shrink-0">
+    <div className="flex h-full gap-4 p-2 border rounded-sm items-center flex-shrink-0">
       {/* Botão - */}
       <span
         onClick={() => onQuantityChange(productId, quantity - 1)}
