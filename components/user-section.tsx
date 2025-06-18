@@ -4,7 +4,7 @@ import Image from 'next/image'
 export function UserSection() {
   return (
     <div className="bg-white py-4 mb-4">
-      <div className="max-w-[1370px] mx-auto">
+      <div className="max-w-[1250px] mx-auto">
         <div className="flex items-center justify-between">
           {/* Welcome Message */}
           <div className="flex items-center space-x-3">

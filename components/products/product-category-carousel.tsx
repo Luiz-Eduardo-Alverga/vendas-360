@@ -57,7 +57,7 @@ export function ProductCategoryCarousel({
 
   return (
     <div className="py-4">
-      <div className="max-w-[1370px] mx-auto py-4 px-6 bg-white rounded-md">
+      <div className="max-w-[1250px] mx-auto py-4 px-6 bg-white rounded-md">
         {/* Section Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
