@@ -1,0 +1,11 @@
+{
+  "name": "companhia-terra-setup",
+  "version": "1.0.0",
+  "description": "Script de setup automático para o projeto Companhia da Terra E-commerce",
+  "scripts": {
+    "setup": "bash setup-project.sh",
+    "setup-windows": "setup-project-windows.bat"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
