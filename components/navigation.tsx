@@ -32,8 +32,8 @@ export function Navigation() {
   ]
 
   return (
-    <nav className="bg-white border-b border-gray-100 px-4 py-4">
-      <div className="max-w-[1300px] mx-auto">
+    <nav className="bg-white border-b border-gray-100 px-4 py-4 flex">
+      <div className="mx-auto">
         <ul className="flex items-center space-x-8">
           {categories.map((category, index) => (
             <li key={index}>

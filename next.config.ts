@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       'd1muf25xaso8hp.cloudfront.net',
       'zonacerealista.com.br',
       'superpaguemenos.com.br',
+      'vitao.vtexassets.com'
     ],
   },
 }

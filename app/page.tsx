@@ -3,6 +3,7 @@ import { Navigation } from '@/components/navigation'
 import { HeroBanner } from '@/components/hero-banner'
 import { UserSection } from '@/components/user-section'
 import { ProductSection } from '@/components/products/product-section'
+import Footer from '@/components/footer'
 
 export default function HomePage() {
   return (
@@ -14,6 +15,9 @@ export default function HomePage() {
         <UserSection />
         <ProductSection />
       </main>
+      
+        <Footer />
+      
     </div>
   )
 }
