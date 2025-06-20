@@ -1,8 +1,10 @@
-import { Search, Heart, ShoppingCart } from 'lucide-react'
+import { Search, Heart } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 import Image from 'next/image'
+import { UserDropDown } from './use-dropdown'
+import { ShoppingCart } from '../shoppingCart'
 
 export function Header() {
   return (
@@ -15,7 +17,7 @@ export function Header() {
             width={40}
             height={40}
           />
-          <span className="text-xl font-bold text-gray-900">
+          <span className="text-lg font-bold text-gray-900">
             Companhia da Terra
           </span>
         </div>
@@ -40,23 +42,10 @@ export function Header() {
         <div className="flex items-center space-x-6">
           <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 hover:cursor-pointer" />
 
-          <div className="flex items-center space-x-4 border p-3 rounded-full cursor-pointer">
-            <div className="relative">
-              <ShoppingCart className="w-5 h-5 text-gray-600" />
-              <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                0
-              </span>
-            </div>
-            <span className="text-sm font-semibold">R$ 0,00</span>
-          </div>
+          <ShoppingCart />
 
-          <Image
-            src="https://43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io/f1738958025870x407176369407359800/user%20avatar%201.svg"
-            width={40}
-            height={40}
-            alt=""
-            className="cursor-pointer"
-          />
+          <UserDropDown />
+          
         </div>
       </div>
     </header>

@@ -41,7 +41,10 @@ export function ProductCategoryCarousel({
     }))
   }
 
-  const maxIndex = Math.max(0, products.length - itemsPerView)
+  const maxIndex = Math.max(0, products.length - 3)
+
+  console.log("Maxindex:",maxIndex)
+  console.log("Currentindex:",currentIndex)
 
   const nextSlide = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, maxIndex))
@@ -79,7 +82,7 @@ export function ProductCategoryCarousel({
               className="flex transition-transform duration-300 ease-in-out gap-4"
               style={{
                 transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
-                width: `${(products.length / itemsPerView) * 100}%`,
+                width: `${products.length * (100 / itemsPerView)}%`,
               }}
             >
               {products.map((product) => {
@@ -197,6 +200,8 @@ export function ProductCategoryCarousel({
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
+
+          
         </div>
       </div>
     </div>
