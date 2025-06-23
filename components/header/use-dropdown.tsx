@@ -7,9 +7,21 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import Image from 'next/image'
-import { User, Settings, LogOut, HelpCircle, ListOrdered } from 'lucide-react'
+import { LogOut, ListOrdered } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { getCustomer } from '@/services/customers/get-customer'
+import { useAuth } from '@/context/AuthContext'
+import toast from 'react-hot-toast'
 
 export function UserDropDown() {
+  const { data: customer } = useQuery({
+    queryKey: ['customer'],
+    queryFn: getCustomer,
+    retry: 1,
+  })
+
+  const { logout } = useAuth()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -24,9 +36,11 @@ export function UserDropDown() {
       <DropdownMenuContent className="w-56 mt-2" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">Antonio</p>
+            <p className="text-sm font-medium leading-none">
+              {customer?.entityName}
+            </p>
             <p className="text-xs leading-none text-muted-foreground">
-              antonio.wac@gmail.com
+              {customer?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -37,7 +51,14 @@ export function UserDropDown() {
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            logout()
+            toast.success('Logout realizado com sucesso', {
+              position: 'top-right',
+            })
+          }}
+        >
           <LogOut className="mr-2 h-4 w-4 text-red-500" />
           <span>Sair</span>
         </DropdownMenuItem>

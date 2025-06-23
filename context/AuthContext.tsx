@@ -8,18 +8,28 @@ import {
   ReactNode,
 } from 'react'
 import Cookies from 'js-cookie'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface AuthContextType {
   accessToken: string | null
   isAuthLoading: boolean
   refreshTokenManually: () => void
+  logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient()
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
+
+  const logout = () => {
+    Cookies.remove('accessToken')
+    Cookies.remove('refreshToken')
+    setAccessToken(null)
+    queryClient.clear() // Limpa o cache do React Query
+  }
 
   const loadToken = () => {
     const token = Cookies.get('accessToken')
@@ -38,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, isAuthLoading, refreshTokenManually }}
+      value={{ accessToken, isAuthLoading, refreshTokenManually, logout }}
     >
       {children}
     </AuthContext.Provider>
