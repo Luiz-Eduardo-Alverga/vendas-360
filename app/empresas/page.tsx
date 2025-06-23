@@ -12,6 +12,7 @@ import toast from 'react-hot-toast'
 import { useAuth } from '@/context/AuthContext'
 
 import { useState } from 'react'
+import { removeDataFromLocalstorage } from '@/utils/remove-data-from-localstore'
 
 interface LoginTenantParams {
   companyId: string
@@ -31,8 +32,7 @@ export default function CompanyList() {
   })
 
   const handleLogout = () => {
-    localStorage.removeItem('userCompanies')
-    localStorage.removeItem('userCredentials')
+    removeDataFromLocalstorage()
     router.push('/login')
   }
 
@@ -61,8 +61,7 @@ export default function CompanyList() {
       router.push('/')
 
       setTimeout(() => {
-        localStorage.removeItem('userCredentials')
-        localStorage.removeItem('userCompanies')
+        removeDataFromLocalstorage()
       }, 1000)
     } catch (error) {
       console.log(error)

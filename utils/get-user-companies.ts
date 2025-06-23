@@ -9,6 +9,11 @@ export interface UserData {
 }
 
 export function getUserData(): UserData[] {
+  if (typeof window === 'undefined') {
+    // Se estiver no server-side (durante build ou SSR), retorna array vazio
+    return []
+  }
+
   const userDataString = localStorage.getItem('userCompanies')
 
   if (!userDataString) {

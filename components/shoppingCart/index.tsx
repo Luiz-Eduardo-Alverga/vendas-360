@@ -1,6 +1,13 @@
-import { ShoppingCartIcon, ShoppingBag } from "lucide-react"
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
-import { Button } from "../ui/button"
+import { ShoppingCartIcon, ShoppingBag } from 'lucide-react'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '../ui/sheet'
+import { Button } from '../ui/button'
 
 export function ShoppingCart() {
   return (
@@ -18,7 +25,7 @@ export function ShoppingCart() {
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-lg">
         <SheetHeader className="flex flex-row gap-2">
-            <ShoppingCartIcon />
+          <ShoppingCartIcon />
           <SheetTitle className="text-left">Seu Carrinho</SheetTitle>
         </SheetHeader>
 
@@ -29,14 +36,19 @@ export function ShoppingCart() {
           </div>
 
           <div className="text-center space-y-2">
-            <h3 className="text-lg font-semibold text-gray-900">Seu carrinho está vazio</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Seu carrinho está vazio
+            </h3>
             <p className="text-sm text-gray-500 max-w-sm">
-              Adicione alguns produtos ao seu carrinho para continuar com o seu orçamento
+              Adicione alguns produtos ao seu carrinho para continuar com o seu
+              orçamento
             </p>
           </div>
 
           <SheetClose asChild>
-            <Button className="mt-6 w-full max-w-xs">Continuar orçamento</Button>
+            <Button className="mt-6 w-full max-w-xs">
+              Continuar orçamento
+            </Button>
           </SheetClose>
         </div>
       </SheetContent>
