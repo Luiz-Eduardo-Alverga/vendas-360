@@ -4,59 +4,53 @@ import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
+import { getTenant } from '@/services/tenant/get-tenant'
+import { useQuery } from '@tanstack/react-query'
 
 export function HeroBanner() {
   const [currentSlide, setCurrentSlide] = useState(0)
 
-  const slides = [
-    {
-      id: 1,
-      image:
-        'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io%2Ff1730828061383x379431951466084860%2Fslide03.png?w=&auto=compress,&dpr=2&fit=max',
-      alt: 'Banner promocional 1',
-    },
-    {
-      id: 2,
-      image:
-        'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io%2Ff1730828061383x379431951466084860%2Fslide03.png?w=&auto=compress,&dpr=2&fit=max',
-      alt: 'Banner promocional 2',
-    },
-    {
-      id: 3,
-      image:
-        'https://d1muf25xaso8hp.cloudfront.net/https%3A%2F%2F43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io%2Ff1730828061383x379431951466084860%2Fslide03.png?w=&auto=compress,&dpr=2&fit=max',
-      alt: 'Banner promocional 3',
-    },
-  ]
+  const { data: tenant } = useQuery({
+    queryKey: ['tenant'],
+    queryFn: getTenant,
+    retry: 1,
+  })
+
+  const images = tenant?.banner
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length)
+    if (!tenant?.banner || tenant.banner.length === 0) return
+    setCurrentSlide((prev) => (prev + 1) % tenant.banner.length)
   }
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
+    if (!tenant?.banner || tenant.banner.length === 0) return
+    setCurrentSlide(
+      (prev) => (prev - 1 + tenant.banner.length) % tenant.banner.length,
+    )
   }
 
   return (
     <div className="relative h-84 overflow-hidden">
       {/* Slides Container */}
       <div className="relative h-full">
-        {slides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-500 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <Image
-              src={slide.image}
-              alt={slide.alt}
-              fill
-              className="object-cover"
-              priority={index === 0}
-            />
-          </div>
-        ))}
+        {images &&
+          images.map((image, index) => (
+            <div
+              key={image.id}
+              className={`absolute inset-0 transition-opacity duration-500 ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <Image
+                src={image.imagePath}
+                alt={image.id}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+            </div>
+          ))}
       </div>
 
       {/* Navigation Arrows */}
@@ -80,15 +74,16 @@ export function HeroBanner() {
 
       {/* Slide Indicators */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            className={`w-3 h-3 rounded-full transition-colors ${
-              index === currentSlide ? 'bg-white' : 'bg-white/50'
-            }`}
-            onClick={() => setCurrentSlide(index)}
-          />
-        ))}
+        {images &&
+          images.map((_, index) => (
+            <button
+              key={index}
+              className={`w-3 h-3 rounded-full transition-colors ${
+                index === currentSlide ? 'bg-white' : 'bg-white/50'
+              }`}
+              onClick={() => setCurrentSlide(index)}
+            />
+          ))}
       </div>
     </div>
   )

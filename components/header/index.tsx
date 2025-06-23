@@ -1,53 +1,97 @@
+'use client'
+
 import { Search, Heart } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-
-import Image from 'next/image'
 import { UserDropDown } from './use-dropdown'
 import { ShoppingCart } from '../shoppingCart'
+import { useQuery } from '@tanstack/react-query'
+import { getTenant } from '@/services/tenant/get-tenant'
+import { ImageWithFallback } from '../images/image-with-fallback'
+import { Skeleton } from '../ui/skeleton'
+import { useState } from 'react'
+import { AuthModal } from './auth-modal'
+import { useAuth } from '@/context/AuthContext'
 
 export function Header() {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const { accessToken, isAuthLoading } = useAuth()
+
+  const { data: tenant, isLoading } = useQuery({
+    queryKey: ['tenant'],
+    queryFn: getTenant,
+    retry: 1,
+  })
+
   return (
-    <header className="fixed top-0 w-full z-50 bg-white border-b border-gray-200 px-4 py-4">
-      <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-20">
-        <div className="flex items-center space-x-2">
-          <Image
-            src="https://43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io/cdn-cgi/image/w=48,h=,f=auto,dpr=1,fit=contain/f1748021192623x855820831810456700/logo-png.png"
-            alt=""
-            width={40}
-            height={40}
-          />
-          <span className="text-lg font-bold text-gray-900">
-            Companhia da Terra
-          </span>
-        </div>
+    <>
+      <header className="fixed top-0 w-full z-50 bg-white border-b border-gray-200 px-4 py-4">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-20">
+          <div className="flex items-center space-x-2">
+            {isLoading ? (
+              <Skeleton className="rounded-full w-10 h-10 bg-zinc-200" />
+            ) : tenant?.logoPath ? (
+              <ImageWithFallback
+                src={tenant.logoPath}
+                alt="Logo da empresa"
+                width={40}
+                height={40}
+              />
+            ) : (
+              <ImageWithFallback
+                src="https://43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io/f1731339139265x190794429300539900/Logo.svg"
+                alt="Logo padrão"
+                width={160}
+                height={40}
+              />
+            )}
 
-        <div className="flex-1 max-w-2xl mx-8">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Busque aqui o seu produto"
-              className="w-full pl-4 pr-12 py-6 border border-gray-300 rounded-sm shadow-2xl"
-            />
-            <Button
-              size="sm"
-              className="absolute right-1 top-2 bottom-1 px-3 text-black"
-              variant="link"
-            >
-              <Search className="w-6 h-6" />
-            </Button>
+            {isLoading ? (
+              <Skeleton className="w-42 h-4 bg-zinc-200"></Skeleton>
+            ) : (
+              <span className="text-lg font-bold text-gray-900">
+                {tenant?.name}
+              </span>
+            )}
           </div>
+
+          <div className="flex-1 max-w-2xl mx-8">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Busque aqui o seu produto"
+                className="w-full pl-4 pr-12 py-6 border border-gray-300 rounded-sm shadow-2xl"
+              />
+              <Button
+                size="sm"
+                className="absolute right-1 top-2 bottom-1 px-3 text-black"
+                variant="link"
+              >
+                <Search className="w-6 h-6" />
+              </Button>
+            </div>
+          </div>
+
+          {isLoading || isAuthLoading ? (
+            <Skeleton className="h-4 w-54" />
+          ) : accessToken ? (
+            <div className="flex items-center space-x-6">
+              <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 hover:cursor-pointer" />
+              <ShoppingCart />
+              <UserDropDown />
+            </div>
+          ) : (
+            <Button
+              className="p-5 cursor-pointer"
+              onClick={() => setIsAuthModalOpen(true)}
+            >
+              Acessar
+            </Button>
+          )}
         </div>
+      </header>
 
-        <div className="flex items-center space-x-6">
-          <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 hover:cursor-pointer" />
-
-          <ShoppingCart />
-
-          <UserDropDown />
-          
-        </div>
-      </div>
-    </header>
+      <AuthModal open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen} />
+    </>
   )
 }

@@ -1,25 +1,49 @@
+import { getCustomer } from '@/services/customers/get-customer'
+import { useQuery } from '@tanstack/react-query'
 import { Heart, Package, MapPin } from 'lucide-react'
-import Image from 'next/image'
+
+import { Skeleton } from './ui/skeleton'
+import { ImageWithFallback } from './images/image-with-fallback'
+import { getCustomerTotalOrders } from '@/services/orders/get-customer-total-oders'
 
 export function UserSection() {
+  const { data: customer, isLoading } = useQuery({
+    queryKey: ['customer'],
+    queryFn: getCustomer,
+  })
+
+  const { data: customerTotalOrders, isLoading: isLoadingCustomerTotalOrders } =
+    useQuery({
+      queryKey: ['customerTotalOrders'],
+      queryFn: getCustomerTotalOrders,
+    })
+
   return (
     <div className="bg-white py-4 mb-4">
       <div className="max-w-[1250px] mx-auto">
         <div className="flex items-center justify-between">
           {/* Welcome Message */}
           <div className="flex items-center space-x-3">
-            <Image
-              src="https://43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io/f1738958025870x407176369407359800/user%20avatar%201.svg"
-              width={40}
-              height={40}
-              alt=""
-              className="cursor-pointer"
-            />
+            {isLoading ? (
+              <Skeleton className="w-10 h-10 rounded-full" />
+            ) : (
+              <ImageWithFallback
+                src={customer?.user.avatarPath}
+                width={40}
+                height={40}
+                alt=""
+                className="cursor-pointer"
+              />
+            )}
             <div>
               <p className="text-sm text-gray-600">Bem-vindo(a) de volta,</p>
-              <p className="font-semibold text-gray-900">
-                antonio.wac@gmail.com
-              </p>
+              {isLoading ? (
+                <Skeleton className="w-32 h-4 mt-1" />
+              ) : (
+                <p className="font-semibold text-gray-900">
+                  {customer?.user.email}
+                </p>
+              )}
             </div>
           </div>
 
@@ -32,10 +56,17 @@ export function UserSection() {
                 <p className="text-sm font-semibold text-gray-900">
                   Meus Favoritos
                 </p>
-                <p className="text-xs text-gray-600">
-                  Você possui <span className="font-semibold">5</span>{' '}
-                  produto(s) favorito(s)!
-                </p>
+                {isLoading ? (
+                  <Skeleton className="w-48 h-2 mt-1" />
+                ) : (
+                  <p className="text-xs text-gray-600">
+                    Você possui{' '}
+                    <span className="font-semibold">
+                      {customer?.favoritesProducts.length}
+                    </span>{' '}
+                    produto(s) favorito(s)!
+                  </p>
+                )}
               </div>
             </div>
 
@@ -46,10 +77,18 @@ export function UserSection() {
                 <p className="text-sm font-semibold text-gray-900">
                   Minhas compras
                 </p>
-                <p className="text-xs text-gray-600">
-                  Você já realizou <span className="font-semibold">4</span>{' '}
-                  pedido(s) conosco!
-                </p>
+
+                {isLoadingCustomerTotalOrders ? (
+                  <Skeleton className="w-48 h-2 mt-1" />
+                ) : (
+                  <p className="text-xs text-gray-600">
+                    Você já realizou{' '}
+                    <span className="font-semibold">
+                      {customerTotalOrders?.length}
+                    </span>{' '}
+                    pedido(s) conosco!
+                  </p>
+                )}
               </div>
             </div>
 
@@ -60,9 +99,27 @@ export function UserSection() {
                 <p className="text-sm font-semibold text-gray-900">
                   Entregar em:
                 </p>
-                <p className="text-xs text-gray-600">
-                  Rua Brigadeiro Eduardo Gomes de Sá, s/nº
-                </p>
+
+                {isLoading ? (
+                  <Skeleton className="w-48 h-2 mt-1" />
+                ) : (
+                  (() => {
+                    const mainAddress = customer?.addresses.find(
+                      (address) => address.isMainAddress,
+                    )
+
+                    return mainAddress ? (
+                      <p className="text-xs text-gray-600">
+                        {mainAddress.addressStreet},{' '}
+                        {mainAddress.addressNumber}{' '}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-gray-600">
+                        Endereço principal não cadastrado
+                      </p>
+                    )
+                  })()
+                )}
               </div>
             </div>
           </div>
