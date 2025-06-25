@@ -49,6 +49,7 @@ export async function loginTenant({ companyId, tenantId }: LoginProps) {
     Cookies.set('accessToken', token, { expires: 1, path: '/' })
     Cookies.set('refreshToken', refreshToken, { expires: 7, path: '/' })
     localStorage.setItem('customerId', customerId)
+    localStorage.setItem('companyId', companyId)
 
     // Limpar credenciais após o login final
   }

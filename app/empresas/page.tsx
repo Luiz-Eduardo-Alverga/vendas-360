@@ -33,7 +33,7 @@ export default function CompanyList() {
 
   const handleLogout = () => {
     removeDataFromLocalstorage()
-    router.push('/login')
+    router.push('/')
   }
 
   if (!userCompanies || userCompanies.length === 0) {

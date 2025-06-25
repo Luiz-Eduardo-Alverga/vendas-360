@@ -15,7 +15,7 @@ export interface CompanyDetails {
   instagram: string | null
   facebook: string | null
   website: string | null
-  logoPath: string | null
+  logoPath: string
   active: boolean
   banner: CompanyBanner[]
 }

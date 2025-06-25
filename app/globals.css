@@ -119,4 +119,41 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE e Edge */
+    scrollbar-width: none;    /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari e Opera */
+  }
+
+  .scroll-fade {
+    position: relative;
+  }
+  
+  .scroll-fade::before,
+  .scroll-fade::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 30px;
+    height: 100%;
+    pointer-events: none;
+  }
+  
+  .scroll-fade::before {
+    left: 0;
+    background: linear-gradient(to right, white, transparent);
+  }
+  
+  .scroll-fade::after {
+    right: 0;
+    background: linear-gradient(to left, white, transparent);
+  }
 }

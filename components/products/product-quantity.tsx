@@ -5,11 +5,11 @@ export function ProductQuantity({
   quantity,
   onQuantityChange,
 }: {
-  productId: number
+  productId: string
   quantity: number
-  onQuantityChange: (productId: number, newQty: number) => void
+  onQuantityChange: (productId: string, newQty: number) => void
 }) {
-  const [editingProductId, setEditingProductId] = useState<number | null>(null)
+  const [editingProductId, setEditingProductId] = useState<string | null>(null)
 
   const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = Math.max(1, Number(e.target.value))

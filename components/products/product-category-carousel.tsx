@@ -6,42 +6,40 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ProductQuantity } from './product-quantity'
 import { CustomDiamondIcon } from '../custom-diamond-icon'
-
-interface Product {
-  id: number
-  name: string
-  image: string
-  discount?: string
-  originalPrice: string
-  price: string
-  isFavorite: boolean
-}
+import { Product } from '@/interfaces/products'
+import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
+import { useCart } from '@/context/cart-context'
+import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
+import { CustomStarIcon } from '../custor-star-icon'
 
 interface CategoryProps {
   categoryName: string
   products: Product[]
-  isPromotion: boolean
+  isPromotion?: boolean
+  isHighlight?: boolean
 }
 
 export function ProductCategoryCarousel({
   categoryName,
   products,
-  isPromotion,
+  isPromotion = false,
+  isHighlight,
 }: CategoryProps) {
+  const { addToCart } = useCart()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [productQuantities, setProductQuantities] = useState<{
-    [key: number]: number
+    [key: string]: number
   }>({})
   const itemsPerView = 4
 
-  const handleQuantityChange = (productId: number, newQty: number) => {
+  const handleQuantityChange = (productId: string, newQty: number) => {
     setProductQuantities((prev) => ({
       ...prev,
       [productId]: Math.max(1, newQty),
     }))
   }
 
-  const maxIndex = Math.max(0, products.length - 3)
+  const maxIndex = Math.max(0, Math.ceil(products.length / itemsPerView))
 
   const nextSlide = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, maxIndex))
@@ -51,8 +49,18 @@ export function ProductCategoryCarousel({
     setCurrentIndex((prev) => Math.max(prev - 1, 0))
   }
 
-  const toggleFavorite = (productId: number) => {
+  const toggleFavorite = (productId: string) => {
     console.log(`Toggle favorite for product ${productId}`)
+  }
+
+  function getActivePromotion(product: Product) {
+    return product.promotions.find(
+      (promo) => promo.active && promo.discount > 0,
+    )
+  }
+
+  function calculateDiscountedPrice(originalPrice: number, discount: number) {
+    return originalPrice - originalPrice * (discount / 100)
   }
 
   return (
@@ -65,9 +73,16 @@ export function ProductCategoryCarousel({
               <CustomDiamondIcon className="w-6 h-6 text-red-600 bg-red-100 rounded-full" />
             )}
 
+            {isHighlight && (
+              <CustomStarIcon className="w-6 h-6 text-yellow-500 bg-yellow-100 rounded-full" />
+            )}
+
             <h2 className="text-xl font-bold text-gray-900">{categoryName}</h2>
           </div>
-          <Button variant="link" className="text-blue-600 hover:text-blue-800">
+          <Button
+            variant="link"
+            className="text-blue-600 hover:text-blue-800 cursor-pointer"
+          >
             Ver tudo
           </Button>
         </div>
@@ -85,6 +100,15 @@ export function ProductCategoryCarousel({
               {products.map((product) => {
                 const quantity = productQuantities[product.id] ?? 1
 
+                const promotion = getActivePromotion(product)
+                const hasPromotion = !!promotion
+                const discountedPrice = hasPromotion
+                  ? calculateDiscountedPrice(
+                      product.priceDefault,
+                      promotion.discount,
+                    )
+                  : product.priceDefault
+
                 return (
                   <div
                     key={product.id}
@@ -92,35 +116,29 @@ export function ProductCategoryCarousel({
                     style={{ width: `${100 / products.length}%` }}
                   >
                     <div className="p-4 border-none h-full flex flex-col gap-1 justify-between min-h-[380px]">
-                      <div>
+                      <div className="cursor-pointer">
                         {/* Discount Badge */}
                         <div className="relative mb-1">
-                          {product.discount && (
-                            <span className="absolute top-1 left-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded z-10">
-                              {product.discount}
+                          {promotion && promotion.discount && (
+                            <span className="absolute font-extrabold top-1 left-0 bg-red-500 text-white text-xs  px-2 py-1 rounded-tl-md z-10">
+                              -{promotion.discount.toFixed(2)}% OFF
                             </span>
                           )}
 
                           <Button
-                            variant="ghost"
+                            variant="link"
                             size="sm"
-                            className={`absolute top-0 right-0 p-1 z-10 ${
-                              product.isFavorite
-                                ? 'text-red-500'
-                                : 'text-gray-400'
-                            }`}
+                            className={`absolute top-0 right-0 p-1 z-10 cursor-pointer bg-white/40 hover:bg-white/50 rounded-full`}
                             onClick={() => toggleFavorite(product.id)}
                           >
-                            <Heart
-                              className={`w-4 h-4 ${product.isFavorite ? 'fill-current' : ''}`}
-                            />
+                            <Heart className={`w-4 h-4 `} />
                           </Button>
                         </div>
 
                         {/* Image */}
                         <div className="aspect-square mb-3 bg-gray-50 rounded-lg overflow-hidden">
                           <Image
-                            src={product.image}
+                            src={normalizeImageUrl(product.images[0]?.url)}
                             alt={product.name}
                             width={200}
                             height={200}
@@ -132,25 +150,27 @@ export function ProductCategoryCarousel({
                           {product.name}
                         </h3>
 
-                        {product.discount ? (
+                        {hasPromotion ? (
                           <div className="space-x-2 flex items-baseline">
                             <p className="text-lg font-bold text-red-600">
-                              {product.price}
+                              {formatCurrencyBRL(discountedPrice)}
                             </p>
                             <p className="text-xs text-gray-500 line-through">
-                              {product.originalPrice}
+                              {formatCurrencyBRL(product.priceDefault)}
                             </p>
                           </div>
                         ) : (
                           <p className="text-lg font-bold">
-                            {product.originalPrice}
+                            {formatCurrencyBRL(product.priceDefault)}
                           </p>
                         )}
                       </div>
 
                       <div className="flex justify-between text-sm">
-                        <span>Unidade</span>
-                        <span>Código: 213131313</span>
+                        <span>{product.unitOfMeasure}</span>
+                        <span className="font-thin">
+                          Código: {product.externalCode}
+                        </span>
                       </div>
 
                       <div className="flex space-x-1 mt-1">
@@ -160,7 +180,13 @@ export function ProductCategoryCarousel({
                           onQuantityChange={handleQuantityChange}
                         />
                         <div className="flex-1">
-                          <Button className="w-full h-full rounded-sm">
+                          <Button
+                            className="w-full h-full rounded-sm cursor-pointer"
+                            onClick={() => {
+                              addToCart(product, quantity)
+                              handleQuantityChange(product.id, 1)
+                            }}
+                          >
                             <ShoppingCart />
                             Adicionar
                           </Button>
@@ -193,7 +219,7 @@ export function ProductCategoryCarousel({
               currentIndex === maxIndex ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             onClick={nextSlide}
-            disabled={currentIndex === maxIndex}
+            disabled={currentIndex === maxIndex || products.length < 3}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>

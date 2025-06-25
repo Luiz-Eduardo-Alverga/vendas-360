@@ -4,7 +4,7 @@ import { Search, Heart } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { UserDropDown } from './use-dropdown'
-import { ShoppingCart } from '../shoppingCart'
+import { ShoppingCartSheet } from '../shoppingCart/shopping-cart'
 import { useQuery } from '@tanstack/react-query'
 import { getTenant } from '@/services/tenant/get-tenant'
 import { ImageWithFallback } from '../images/image-with-fallback'
@@ -77,7 +77,7 @@ export function Header() {
           ) : accessToken ? (
             <div className="flex items-center space-x-6">
               <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 hover:cursor-pointer" />
-              <ShoppingCart />
+              <ShoppingCartSheet />
               <UserDropDown />
             </div>
           ) : (
