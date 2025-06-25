@@ -5,12 +5,13 @@ import { ChevronLeft, ChevronRight, Heart, ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ProductQuantity } from './product-quantity'
-import { CustomDiamondIcon } from '../custom-diamond-icon'
+import { CustomDiamondIcon } from '../icon/custom-diamond-icon'
 import { Product } from '@/interfaces/products'
 import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
 import { useCart } from '@/context/cart-context'
 import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
-import { CustomStarIcon } from '../custor-star-icon'
+import { CustomStarIcon } from '../icon/custor-star-icon'
+import { CustomCartAddedIcon } from '../icon/custom-cart-added-icon'
 
 interface CategoryProps {
   categoryName: string
@@ -25,12 +26,15 @@ export function ProductCategoryCarousel({
   isPromotion = false,
   isHighlight,
 }: CategoryProps) {
-  const { addToCart } = useCart()
+  const { addToCart, cartItems } = useCart()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [productQuantities, setProductQuantities] = useState<{
     [key: string]: number
   }>({})
   const itemsPerView = 4
+
+  const isInCart = (productId: string) =>
+    cartItems.some((item) => item.product.id === productId)
 
   const handleQuantityChange = (productId: string, newQty: number) => {
     setProductQuantities((prev) => ({
@@ -136,7 +140,7 @@ export function ProductCategoryCarousel({
                         </div>
 
                         {/* Image */}
-                        <div className="aspect-square mb-3 bg-gray-50 rounded-lg overflow-hidden">
+                        <div className="relative aspect-square mb-3 bg-gray-50 rounded-lg overflow-hidden">
                           <Image
                             src={normalizeImageUrl(product.images[0]?.url)}
                             alt={product.name}
@@ -144,6 +148,15 @@ export function ProductCategoryCarousel({
                             height={200}
                             className="w-full h-full object-cover bg-white"
                           />
+
+                          {isInCart(product.id) && (
+                            <div className="absolute flex w-full justify-center items-center gap-2 p-1.5 t bottom-0 bg-chart-5">
+                              <CustomCartAddedIcon className="w-6 h-6" />
+                              <span className="font-semibold text-sm">
+                                Já adicionado ao carrinho
+                              </span>
+                            </div>
+                          )}
                         </div>
 
                         <h3 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[2.5rem]">

@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { CustomDiamondIcon } from '../custom-diamond-icon'
+import { CustomDiamondIcon } from '../icon/custom-diamond-icon'
 
 interface ProductCategoryCarouselSkeletonProps {
   categoryName?: string
