@@ -39,7 +39,7 @@ export function ProductCategoryCarousel({
     }))
   }
 
-  const maxIndex = Math.max(0, Math.ceil(products.length / itemsPerView))
+  const maxIndex = Math.max(0, products.length - itemsPerView)
 
   const nextSlide = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, maxIndex))
@@ -93,7 +93,7 @@ export function ProductCategoryCarousel({
             <div
               className="flex transition-transform duration-300 ease-in-out gap-4"
               style={{
-                transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
+                transform: `translateX(-${currentIndex * 380}px)`,
                 width: `${products.length * (100 / itemsPerView)}%`,
               }}
             >
@@ -113,7 +113,7 @@ export function ProductCategoryCarousel({
                   <div
                     key={product.id}
                     className="flex-shrink-0"
-                    style={{ width: `${100 / products.length}%` }}
+                    style={{ width: '300px' }}
                   >
                     <div className="p-4 border-none h-full flex flex-col gap-1 justify-between min-h-[380px]">
                       <div className="cursor-pointer">
@@ -199,7 +199,6 @@ export function ProductCategoryCarousel({
             </div>
           </div>
 
-          {/* Navigation Arrows */}
           <Button
             variant="ghost"
             size="sm"
