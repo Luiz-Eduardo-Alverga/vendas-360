@@ -1,7 +1,7 @@
 import { Navigation } from '@/components/navigation'
 import { HeroBanner } from '@/components/hero-banner'
 import { UserSection } from '@/components/user-section'
-import { ProductSection } from '@/components/products/product-section'
+import { ProductSection } from '@/components/carrosel/carrosel-section'
 import Footer from '@/components/footer'
 import { Header } from '@/components/header'
 import { Metadata } from 'next'
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-zinc-100">
-      <Header />
+      
 
       <main className="pt-20">
         <Navigation />
@@ -22,7 +22,7 @@ export default function HomePage() {
         <ProductSection />
       </main>
 
-      <Footer />
+      
     </div>
   )
 }

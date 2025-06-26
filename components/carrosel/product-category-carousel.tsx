@@ -13,12 +13,14 @@ import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
 import { CustomStarIcon } from '../icon/custor-star-icon'
 import { CustomCartAddedIcon } from '../icon/custom-cart-added-icon'
 import { getProductPricing } from '@/utils/promotion/get-active-promotion'
+import Link from 'next/link'
 
 interface CategoryProps {
-  categoryName: string
+  categoryName?: string
   products: Product[]
   isPromotion?: boolean
   isHighlight?: boolean
+  isShowAllButtonVisible?: boolean
 }
 
 export function ProductCategoryCarousel({
@@ -26,6 +28,7 @@ export function ProductCategoryCarousel({
   products,
   isPromotion = false,
   isHighlight,
+  isShowAllButtonVisible = true
 }: CategoryProps) {
   const { addToCart, cartItems } = useCart()
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -74,12 +77,15 @@ export function ProductCategoryCarousel({
 
             <h2 className="text-xl font-bold text-gray-900">{categoryName}</h2>
           </div>
-          <Button
+          {isShowAllButtonVisible && (
+            <Button
             variant="link"
             className="text-blue-600 hover:text-blue-800 cursor-pointer"
           >
             Ver tudo
           </Button>
+          )}
+          
         </div>
 
         {/* Products Carousel */}
@@ -105,7 +111,9 @@ export function ProductCategoryCarousel({
                     style={{ width: '300px' }}
                   >
                     <div className="p-4 border-none h-full flex flex-col gap-1 justify-between min-h-[380px]">
-                      <div className="cursor-pointer">
+                      <Link
+                        href={`/produto/${product.id}`} 
+                        className="cursor-pointer">
                         {/* Discount Badge */}
                         <div className="relative mb-1">
                           {promotion && promotion.discount && (
@@ -174,7 +182,7 @@ export function ProductCategoryCarousel({
                             {formatCurrencyBRL(product.priceDefault)}
                           </p>
                         )}
-                      </div>
+                      </Link>
 
                       <div className="flex justify-between text-sm">
                         <span>{product.unitOfMeasure}</span>
