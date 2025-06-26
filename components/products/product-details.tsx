@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Share2, ChevronLeft, ChevronRight, ZoomIn, Star, Tag } from "lucide-react";
+import { Heart, Share2, ChevronLeft, ChevronRight, ZoomIn, Star, Tag, Home } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -12,6 +12,9 @@ import { getProductPricing } from "@/utils/promotion/get-active-promotion";
 import { formatCurrencyBRL } from "@/utils/prodcuts/format-currency-BRL";
 import { Separator } from "../ui/separator";
 import { RelatedProducts } from "./related-products";
+import { ProductDetailsSkeleton } from "./product-details-skeleton";
+import Link from "next/link";
+import { getCategorie } from "@/services/categories/get-categorie";
 
 
 const CustomTag = ({ icon: Icon, label }: { icon?: any, label: string }) => {
@@ -38,14 +41,23 @@ export default function ProductDetails({ id } : { id: string}) {
   }
 
   const {data: product, isLoading, error} = useQuery({
-    queryKey: ['products'],
-    queryFn: () => getProduct({productId: id})
-
+    queryKey: ['products', id],
+    queryFn: () => getProduct({productId: id}),   
   })
 
+  const categoryId = product?.categoryId;
 
-  if (isLoading) return <div className="p-8 text-center">Carregando produto...</div>;
+const { data: category } = useQuery({
+  queryKey: ['category', categoryId],
+  queryFn: () => getCategorie({ categoryId: categoryId as string }),
+  enabled: !!categoryId,
+});
+
+  
+  if(isLoading) return <ProductDetailsSkeleton />
+
   if (error || !product) return <div className="p-8 text-center text-red-500">Erro ao carregar produto.</div>;  
+
 
   const quantity = productQuantities[product.id] ?? 1
 
@@ -63,17 +75,19 @@ export default function ProductDetails({ id } : { id: string}) {
     setIsFavorite(!isFavorite);
   };
 
-  return (
+  
+
+  return (   
     <div className="min-h-screen bg-white pt-20 border-b">
       {/* Breadcrumb section */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-10 py-4">
           <div className="flex items-center text-sm text-gray-500 space-x-2">
-            <span>Farinhas, Fibras e Féculas</span>
+            <Link href="/"><Home /></Link>
             <span>›</span>
-            <span>Farinha de Linhaça</span>
+            <span>{category?.description}</span>
             <span>›</span>
-            <span className="text-gray-900">Farinha de Linhaça Marrom 150g</span>
+            <span className="text-gray-900">{product.name}</span>
           </div>
         </div>
       </div>
@@ -181,10 +195,10 @@ export default function ProductDetails({ id } : { id: string}) {
                   <CustomTag icon={Tag} label="Promo" />
                 )
               }
+                {product.tags.map((tag) => (
+                  <CustomTag label={tag.name} key={tag.id} />
+                ))}
                 
-                <CustomTag label="Rico em Ômega 3" />
-                <CustomTag label="Integral" />
-                <CustomTag label="Sem Glúten" />
               </div>
 
               {/* Product Title */}
