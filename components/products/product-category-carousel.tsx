@@ -12,6 +12,7 @@ import { useCart } from '@/context/cart-context'
 import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
 import { CustomStarIcon } from '../icon/custor-star-icon'
 import { CustomCartAddedIcon } from '../icon/custom-cart-added-icon'
+import { getProductPricing } from '@/utils/promotion/get-active-promotion'
 
 interface CategoryProps {
   categoryName: string
@@ -57,16 +58,6 @@ export function ProductCategoryCarousel({
     console.log(`Toggle favorite for product ${productId}`)
   }
 
-  function getActivePromotion(product: Product) {
-    return product.promotions.find(
-      (promo) => promo.active && promo.discount > 0,
-    )
-  }
-
-  function calculateDiscountedPrice(originalPrice: number, discount: number) {
-    return originalPrice - originalPrice * (discount / 100)
-  }
-
   return (
     <div className="py-4">
       <div className="max-w-[1250px] mx-auto py-4 px-6 bg-white rounded-md">
@@ -104,14 +95,8 @@ export function ProductCategoryCarousel({
               {products.map((product) => {
                 const quantity = productQuantities[product.id] ?? 1
 
-                const promotion = getActivePromotion(product)
-                const hasPromotion = !!promotion
-                const discountedPrice = hasPromotion
-                  ? calculateDiscountedPrice(
-                      product.priceDefault,
-                      promotion.discount,
-                    )
-                  : product.priceDefault
+                const { hasPromotion, promotion, discountedPrice } =
+                  getProductPricing(product)
 
                 return (
                   <div
@@ -141,13 +126,25 @@ export function ProductCategoryCarousel({
 
                         {/* Image */}
                         <div className="relative aspect-square mb-3 bg-gray-50 rounded-lg overflow-hidden">
-                          <Image
-                            src={normalizeImageUrl(product.images[0]?.url)}
-                            alt={product.name}
-                            width={200}
-                            height={200}
-                            className="w-full h-full object-cover bg-white"
-                          />
+                          {product.images.length === 0 ? (
+                            <Image
+                              src={normalizeImageUrl(
+                                'https://43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io/f1748081787471x308714204055397600/image_default.png',
+                              )}
+                              alt={product.name}
+                              width={200}
+                              height={200}
+                              className="w-full h-full"
+                            />
+                          ) : (
+                            <Image
+                              src={normalizeImageUrl(product.images[0]?.url)}
+                              alt={product.name}
+                              width={200}
+                              height={200}
+                              className="w-full h-full object-cover bg-white"
+                            />
+                          )}
 
                           {isInCart(product.id) && (
                             <div className="absolute flex w-full justify-center items-center gap-2 p-1.5 t bottom-0 bg-chart-5">

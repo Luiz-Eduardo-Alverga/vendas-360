@@ -1,7 +1,6 @@
 'use client'
 
-import { Search, Heart } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+import { Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { UserDropDown } from './use-dropdown'
 import { ShoppingCartSheet } from '../shoppingCart/shopping-cart'
@@ -12,6 +11,7 @@ import { Skeleton } from '../ui/skeleton'
 import { useState } from 'react'
 import { AuthModal } from './auth-modal'
 import { useAuth } from '@/context/AuthContext'
+import { SearchProducts } from '../searchProducts'
 
 export function Header() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
@@ -55,22 +55,7 @@ export function Header() {
             )}
           </div>
 
-          <div className="flex-1 max-w-2xl mx-8">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Busque aqui o seu produto"
-                className="w-full pl-4 pr-12 py-6 border border-gray-300 rounded-sm shadow-2xl"
-              />
-              <Button
-                size="sm"
-                className="absolute right-1 top-2 bottom-1 px-3 text-black"
-                variant="link"
-              >
-                <Search className="w-6 h-6" />
-              </Button>
-            </div>
-          </div>
+          <SearchProducts />
 
           {isLoading || isAuthLoading ? (
             <Skeleton className="h-4 w-54" />
