@@ -1,9 +1,9 @@
 'use client'
 
-import { Heart, ChevronLeft, ChevronRight, Star, Tag, Home } from 'lucide-react'
+import { Heart, ChevronLeft, ChevronRight, Star, Tag } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { useState, ComponentType, SVGProps } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getProduct } from '@/services/products/get-product'
 import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
@@ -13,11 +13,16 @@ import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
 import { Separator } from '../ui/separator'
 import { RelatedProducts } from './related-products'
 import { ProductDetailsSkeleton } from './product-details-skeleton'
-import Link from 'next/link'
 import { getCategorie } from '@/services/categories/get-categorie'
 import { Breadcrumb } from '../breadcrumb'
 
-const CustomTag = ({ icon: Icon, label }: { icon?: any; label: string }) => {
+const CustomTag = ({
+  icon: Icon,
+  label,
+}: {
+  icon?: ComponentType<SVGProps<SVGSVGElement>>
+  label: string
+}) => {
   return (
     <div className="flex items-center h-[34px] bg-white/80 rounded px-2 py-1 border border-gray-200">
       {Icon && <Icon className="w-4 h-4 text-black-500 mr-1" />}

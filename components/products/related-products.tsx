@@ -8,11 +8,7 @@ interface RelatedProductsProps {
 }
 
 export function RelatedProducts({ categoryId }: RelatedProductsProps) {
-  const {
-    data: products,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data: products, isLoading } = useQuery({
     queryKey: ['products', categoryId],
     queryFn: () => getProducts({ categoryId }),
     retry: 1,
