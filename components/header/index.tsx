@@ -16,11 +16,11 @@ import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
 import Link from 'next/link'
 
 export function Header() {
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const { accessToken, isAuthLoading } = useAuth()
 
-  useKeyboardShortcut("k", () => setIsSearchModalOpen(true), { ctrl: true });
+  useKeyboardShortcut('k', () => setIsSearchModalOpen(true), { ctrl: true })
 
   const { data: tenant, isLoading } = useQuery({
     queryKey: ['tenant'],
@@ -32,9 +32,7 @@ export function Header() {
     <>
       <header className="fixed top-0 w-full z-50 bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-20">
-          <Link 
-            href="/"
-            className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             {isLoading ? (
               <Skeleton className="rounded-full w-10 h-10 bg-zinc-200" />
             ) : tenant?.logoPath ? (
@@ -65,27 +63,27 @@ export function Header() {
           {/* <SearchProducts /> */}
 
           <div className="flex items-center gap-6 relative flex-1 min-w-0 max-w-2xl">
-              {/* Search Bar - Desktop */}
-              <button
-                onClick={() => setIsSearchModalOpen(true)}
-                className="flex w-full items-center gap-4 px-4 py-2.5 relative bg-[#f8f9fa] hover:bg-[#f1f3f4] transition-colors duration-200 rounded-lg border border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:border-blue-300 group"
-              >
-                <SearchIcon className="w-5 h-5 text-gray-400 group-hover:text-gray-500 transition-colors duration-200 flex-shrink-0" />
-                <div className="relative flex-1 font-normal text-gray-600 text-sm text-left">
-                  Busque aqui o seu produto
+            {/* Search Bar - Desktop */}
+            <button
+              onClick={() => setIsSearchModalOpen(true)}
+              className="flex w-full items-center gap-4 px-4 py-2.5 relative bg-[#f8f9fa] hover:bg-[#f1f3f4] transition-colors duration-200 rounded-lg border border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:border-blue-300 group"
+            >
+              <SearchIcon className="w-5 h-5 text-gray-400 group-hover:text-gray-500 transition-colors duration-200 flex-shrink-0" />
+              <div className="relative flex-1 font-normal text-gray-600 text-sm text-left">
+                Busque aqui o seu produto
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="text-xs text-gray-400 font-medium bg-gray-100 px-2 py-1 rounded border">
+                  ⌘K
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <div className="text-xs text-gray-400 font-medium bg-gray-100 px-2 py-1 rounded border">
-                    ⌘K
-                  </div>
-                </div>
-              </button>
+              </div>
+            </button>
           </div>
 
           <SearchModal
             isOpen={isSearchModalOpen}
             onClose={() => setIsSearchModalOpen(false)}
-        />
+          />
 
           {isLoading || isAuthLoading ? (
             <Skeleton className="h-4 w-54" />

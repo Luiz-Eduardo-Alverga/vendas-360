@@ -47,4 +47,4 @@ export interface Product {
   images: ProductImage[]
   stock: ProductStock[]
   promotions: ProductPromotion[]
-} 
+}

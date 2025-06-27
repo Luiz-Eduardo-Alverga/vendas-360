@@ -5,28 +5,14 @@ import { useQuery } from '@tanstack/react-query'
 import { getCategories } from '@/services/categories/get-categories'
 import { getPromotions } from '@/services/promotions/get-promotions'
 import { getHighlights } from '@/services/highlights/get-highlights'
-import { Promotion } from '@/interfaces/promotions'
-import { Highlight } from '@/interfaces/highlights'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CustomStarIcon } from './icon/custor-star-icon'
 import { CustomDiamondIcon } from './icon/custom-diamond-icon'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { slugify } from '@/utils/slugify'
-
-function isPromotionActive(promotion: Promotion): boolean {
-  const today = new Date()
-  const start = new Date(promotion.startDate)
-  const end = new Date(promotion.endDate)
-  return promotion.active && start <= today && end >= today
-}
-
-function isHighlightActive(highlight: Highlight): boolean {
-  const today = new Date()
-  const start = new Date(highlight.startDate)
-  const end = new Date(highlight.endDate)
-  return highlight.active && start <= today && end >= today
-}
+import { isHighlightActive } from '@/utils/highlights/is-highlights-active'
+import { isPromotionActive } from '@/utils/promotion/is-promotion-active'
 
 export function Navigation() {
   const { data: categories, isLoading: isLoadingCategories } = useQuery({
@@ -202,21 +188,21 @@ export function Navigation() {
               ))}
 
             {/* DESTAQUES */}
+
             {!isLoadingHighlights &&
-              activeHighlights &&
-              activeHighlights.length > 0 && (
-                <li key="highlight-combined">
+              activeHighlights?.map((highlight) => (
+                <li key={highlight.id}>
                   <a
-                    href="#destaques"
+                    href={`#${slugify(highlight.title)}`}
                     className="flex items-center space-x-2 text-sm font-medium hover:opacity-80 text-yellow-500"
                   >
                     <div className="p-0.5 rounded-full flex items-center justify-center bg-yellow-100">
                       <CustomStarIcon className="w-6 h-6 text-yellow-500" />
                     </div>
-                    <span>Destaques</span>
+                    <span>{highlight.title}</span>
                   </a>
                 </li>
-              )}
+              ))}
 
             {/* CATEGORIAS */}
             {!isLoadingCategories &&

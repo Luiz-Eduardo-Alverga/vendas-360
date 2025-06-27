@@ -1,187 +1,190 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
-import { Search, X } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { useQuery } from "@tanstack/react-query";
-import { getProducts } from "@/services/products/get-products";
-import { normalizeImageUrl } from "@/utils/prodcuts/normalize-image-url";
-import Image from "next/image";
-import { Product } from "@/interfaces/products";
-import { getProductPricing } from "@/utils/promotion/get-active-promotion";
-import { formatCurrencyBRL } from "@/utils/prodcuts/format-currency-BRL";
-import Link from "next/link";
-import { useRouter } from "next/navigation"
+import { Search, X } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
+import { Input } from '../ui/input'
+import { useQuery } from '@tanstack/react-query'
+import { getProducts } from '@/services/products/get-products'
+import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
+import Image from 'next/image'
+import { Product } from '@/interfaces/products'
+import { getProductPricing } from '@/utils/promotion/get-active-promotion'
+import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface SearchModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }
 
 const useDebounce = (value: string, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
+  const [debouncedValue, setDebouncedValue] = useState(value)
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
+      setDebouncedValue(value)
+    }, delay)
 
-    return () => clearTimeout(handler);
-  }, [value, delay]);
+    return () => clearTimeout(handler)
+  }, [value, delay])
 
-  return debouncedValue;
-};
+  return debouncedValue
+}
 
-export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
-  const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [isWaitingForUser, setIsWaitingForUser] = useState(false);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+export const SearchModal: React.FC<SearchModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
+  const router = useRouter()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [hasSearched, setHasSearched] = useState(false)
+  const [isWaitingForUser, setIsWaitingForUser] = useState(false)
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500)
 
   const {
     data: searchProducts,
     isFetching,
     isSuccess,
   } = useQuery({
-    queryKey: ["product", debouncedSearchTerm],
+    queryKey: ['product', debouncedSearchTerm],
     queryFn: () => getProducts({ find: debouncedSearchTerm }),
     enabled: debouncedSearchTerm.length > 2,
-  });
+    retry: 1,
+  })
 
-  const products = searchProducts || [];
+  const products = searchProducts || []
   console.log(products)
+
+  const handleProductSelect = (product: Product) => {
+    router.push(`/produto/${product.id}`)
+    onClose()
+  }
 
   useEffect(() => {
     if (debouncedSearchTerm.length > 2) {
-      setHasSearched(true);
+      setHasSearched(true)
     } else {
-      setHasSearched(false);
+      setHasSearched(false)
     }
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm])
 
   useEffect(() => {
     if (debouncedSearchTerm !== searchTerm) {
       // User is still typing
-      return;
+      return
     }
 
-    setIsWaitingForUser(false);
-    
-  }, [debouncedSearchTerm, searchTerm]);
+    setIsWaitingForUser(false)
+  }, [debouncedSearchTerm, searchTerm])
 
   useEffect(() => {
     if (searchTerm && searchTerm !== debouncedSearchTerm) {
-      setIsWaitingForUser(true);
+      setIsWaitingForUser(true)
     }
-  }, [searchTerm, debouncedSearchTerm]);
+  }, [searchTerm, debouncedSearchTerm])
 
   useEffect(() => {
     if (isOpen) {
-      setSearchTerm("");
-      setSelectedIndex(-1);
-      setHasSearched(false);
-      setIsWaitingForUser(false);
+      setSearchTerm('')
+      setSelectedIndex(-1)
+      setHasSearched(false)
+      setIsWaitingForUser(false)
     }
-  }, [isOpen]);
+  }, [isOpen])
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = 'unset'
     }
     return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
 
   useEffect(() => {
     if (selectedIndex >= 0 && itemRefs.current[selectedIndex]) {
       itemRefs.current[selectedIndex]?.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
-      });
+      })
     }
-  }, [selectedIndex]);
+  }, [selectedIndex])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-  
+      if (!isOpen) return
+
       switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
+        case 'ArrowDown':
+          e.preventDefault()
           setSelectedIndex((prev) =>
-            prev < products.length - 1 ? prev + 1 : prev
-          );
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-          break;
-        case "Enter":
-          e.preventDefault();
+            prev < products.length - 1 ? prev + 1 : prev,
+          )
+          break
+        case 'ArrowUp':
+          e.preventDefault()
+          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1))
+          break
+        case 'Enter':
+          e.preventDefault()
           if (selectedIndex >= 0 && products[selectedIndex]) {
-            handleProductSelect(products[selectedIndex]);
+            handleProductSelect(products[selectedIndex])
           }
-          break;
-        case "Escape":
-          onClose();
-          break;
+          break
+        case 'Escape':
+          onClose()
+          break
       }
-    };
-  
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, selectedIndex, products, onClose]);
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, selectedIndex, products, onClose, handleProductSelect])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
+      if (!isOpen) return
 
       switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
+        case 'ArrowDown':
+          e.preventDefault()
           setSelectedIndex((prev) =>
-            prev < products.length - 1 ? prev + 1 : prev
-          );
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
-          break;
-        case "Enter":
-          e.preventDefault();
+            prev < products.length - 1 ? prev + 1 : prev,
+          )
+          break
+        case 'ArrowUp':
+          e.preventDefault()
+          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1))
+          break
+        case 'Enter':
+          e.preventDefault()
           if (selectedIndex >= 0 && products[selectedIndex]) {
-            handleProductSelect(products[selectedIndex]);
+            handleProductSelect(products[selectedIndex])
           }
-          break;
-        case "Escape":
-          onClose();
-          break;
+          break
+        case 'Escape':
+          onClose()
+          break
       }
-    };
+    }
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, selectedIndex, products, onClose]);
-
-  const handleProductSelect = (product: Product) => {
-    router.push(`/produto/${product.id}`);
-    onClose();
-  };
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, selectedIndex, products, onClose])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    setSelectedIndex(-1);
-  };
+    const value = e.target.value
+    setSearchTerm(value)
+    setSelectedIndex(-1)
+  }
 
   const renderContent = () => {
     if (!searchTerm.trim() && !hasSearched) {
@@ -200,23 +203,34 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
             Comece digitando para ver os resultados em tempo real
           </p>
         </div>
-      );
+      )
     }
 
     if (isWaitingForUser) {
-        return (
-          <div className="flex items-center justify-center h-32 flex-1">
-            <div className="flex items-center gap-3 text-gray-600">
-              <div className="flex gap-1">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-              </div>
-              <span className="text-sm font-medium">Aguardando você terminar de digitar...</span>
+      return (
+        <div className="flex items-center justify-center h-32 flex-1">
+          <div className="flex items-center gap-3 text-gray-600">
+            <div className="flex gap-1">
+              <div
+                className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                style={{ animationDelay: '0ms' }}
+              ></div>
+              <div
+                className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                style={{ animationDelay: '150ms' }}
+              ></div>
+              <div
+                className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                style={{ animationDelay: '300ms' }}
+              ></div>
             </div>
+            <span className="text-sm font-medium">
+              Aguardando você terminar de digitar...
+            </span>
           </div>
-        );
-      }
+        </div>
+      )
+    }
 
     if (isFetching) {
       return (
@@ -226,27 +240,31 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
             <span className="text-sm font-medium">Buscando produtos...</span>
           </div>
         </div>
-      );
+      )
     }
 
     if (isSuccess && products.length > 0) {
       return (
         <div className="flex flex-col min-h-0 flex-1">
           <div className="px-4 lg:px-6 py-3 text-sm text-gray-600 border-b border-gray-100 bg-gray-50 flex-shrink-0">
-            {products.length} produto{products.length !== 1 ? "s" : ""} encontrado{products.length !== 1 ? "s" : ""} para "{searchTerm}"
+            {products.length} produto{products.length !== 1 ? 's' : ''}{' '}
+            encontrado{products.length !== 1 ? 's' : ''} para {searchTerm}
           </div>
           <div className="flex-1 overflow-y-auto max-h-[350px] min-h-0">
             <div className="space-y-1">
-              {products.map((product: Product, index: number) => { 
-                const { hasPromotion, discountedPrice } = getProductPricing(product)
+              {products.map((product: Product, index: number) => {
+                const { hasPromotion, discountedPrice } =
+                  getProductPricing(product)
                 return (
                   <div
                     key={product.id}
                     ref={(el) => {
-                      itemRefs.current[index] = el;
+                      itemRefs.current[index] = el
                     }}
                     className={`flex gap-3 p-3 cursor-pointer border-b border-gray-100 last:border-b-0 ${
-                      index === selectedIndex ? "bg-gray-100" : "hover:bg-gray-50"
+                      index === selectedIndex
+                        ? 'bg-gray-100'
+                        : 'hover:bg-gray-50'
                     }`}
                   >
                     <Link
@@ -254,72 +272,73 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                       onClick={onClose}
                       className="flex gap-3 w-full"
                     >
-                        <div className=" h-22 w-22 border bg-white rounded flex items-center justify-center flex-shrink-0">
-                            <Image
-                            src={
-                                product.images.length === 0
-                                ? normalizeImageUrl(
-                                    'https://43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io/f1748081787471x308714204055397600/image_default.png',
-                                    )
-                                : normalizeImageUrl(product.images[0].url)
-                            }
-                            alt={product.name}
-                            width={100}
-                            height={10}
-                            />
+                      <div className=" h-22 w-22 border bg-white rounded flex items-center justify-center flex-shrink-0">
+                        <Image
+                          src={
+                            product.images.length === 0
+                              ? normalizeImageUrl(
+                                  'https://43eba7a9e7b2ca5208818e2171a13420.cdn.bubble.io/f1748081787471x308714204055397600/image_default.png',
+                                )
+                              : normalizeImageUrl(product.images[0].url)
+                          }
+                          alt={product.name}
+                          width={100}
+                          height={10}
+                        />
+                      </div>
+
+                      <div className="flex-1 min-w-0  flex flex-col justify-between ">
+                        <div className="flex justify-between items-start -mb-4">
+                          <div>
+                            <h3 className="font-medium text-gray-900 text-sm mb-1 truncate">
+                              {product.name}
+                            </h3>
+                          </div>
+
+                          <div className="text-xs text-gray-500">
+                            {product.unitOfMeasure}
+                          </div>
                         </div>
-        
-                        <div className="flex-1 min-w-0  flex flex-col justify-between ">
-                            <div className="flex justify-between items-start -mb-4">
-                            <div>
-                                <h3 className="font-medium text-gray-900 text-sm mb-1 truncate">
-                                {product.name}
-                                </h3>
-                            </div>
-        
-                            <div className="text-xs text-gray-500">
-                                {product.unitOfMeasure}
-                            </div>
-                            </div>
-        
-                            <div>
-                            <p className="text-xs text-gray-600 line-clamp-2">
-                                {product.description}
+
+                        <div>
+                          <p className="text-xs text-gray-600 line-clamp-2">
+                            {product.description}
+                          </p>
+                        </div>
+
+                        <div className="flex justify-between items-end">
+                          <div>
+                            <p className="text-xs text-gray-500">
+                              Código: {product.externalCode}
                             </p>
-                            </div>
-        
-                            <div className="flex justify-between items-end">
-                            <div>
-                                <p className="text-xs text-gray-500">
-                                Código: {product.externalCode}
+                          </div>
+
+                          <div className="flex items-center gap-1 justify-end">
+                            {hasPromotion ? (
+                              <>
+                                <span className="text-lg font-bold text-red-600">
+                                  {formatCurrencyBRL(discountedPrice)}
+                                </span>
+                                <p className="text-xs text-gray-500 line-through">
+                                  {formatCurrencyBRL(product.priceDefault)}
                                 </p>
-                            </div>
-        
-                            <div className="flex items-center gap-1 justify-end">
-                                {hasPromotion ? (
-                                <>
-                                    <span className="text-lg font-bold text-red-600">
-                                    {formatCurrencyBRL(discountedPrice)}
-                                    </span>
-                                    <p className="text-xs text-gray-500 line-through">
-                                    {formatCurrencyBRL(product.priceDefault)}
-                                    </p>
-                                </>
-                                ) : (
-                                <p className="text-lg font-bold">
-                                    {formatCurrencyBRL(product.priceDefault)}
-                                </p>
-                                )}
-                            </div>
-                            </div>
+                              </>
+                            ) : (
+                              <p className="text-lg font-bold">
+                                {formatCurrencyBRL(product.priceDefault)}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </Link>               
-                      </div>               
-              ) })}
+                      </div>
+                    </Link>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
-      );
+      )
     }
 
     if (isSuccess && products.length === 0 && searchTerm.trim()) {
@@ -332,19 +351,19 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
             Nenhum produto encontrado
           </h3>
           <p className="text-gray-600 mb-1">
-            Não encontramos produtos para "{searchTerm}"
+            Não encontramos produtos para {searchTerm}
           </p>
           <p className="text-sm text-gray-400">
             Tente usar termos diferentes ou mais gerais
           </p>
         </div>
-      );
+      )
     }
 
-    return null;
-  };
+    return null
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <>
@@ -378,8 +397,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
         <DialogContent
           className="hidden lg:flex max-w-2xl p-0 bg-white rounded-lg shadow-2xl overflow-hidden border-0 flex-col"
           style={{
-            height: hasSearched && products.length > 0 ? "auto" : "400px",
-            maxHeight: "80vh",
+            height: hasSearched && products.length > 0 ? 'auto' : '400px',
+            maxHeight: '80vh',
           }}
         >
           <button
@@ -405,5 +424,5 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
         </DialogContent>
       </Dialog>
     </>
-  );
-};
+  )
+}
