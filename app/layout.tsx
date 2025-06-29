@@ -34,9 +34,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster />
         <ReactQueryProvider>
           <AuthProvider>
+            <Toaster />
             <CartProvider>{children}</CartProvider>
           </AuthProvider>
         </ReactQueryProvider>

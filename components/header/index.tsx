@@ -26,6 +26,7 @@ export function Header() {
     queryKey: ['tenant'],
     queryFn: getTenant,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   return (
@@ -85,7 +86,7 @@ export function Header() {
             onClose={() => setIsSearchModalOpen(false)}
           />
 
-          {isLoading || isAuthLoading ? (
+          {isAuthLoading ? (
             <Skeleton className="h-4 w-54" />
           ) : accessToken ? (
             <div className="flex items-center space-x-6">

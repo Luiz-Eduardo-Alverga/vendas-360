@@ -10,19 +10,22 @@ import { slugify } from '@/utils/slugify'
 import { Product as APIProduct, ProductPromotion } from '@/interfaces/products'
 import { ProductCategoryCarouselSkeleton } from './product-category-carousel-skeleton'
 import { isHighlightActive } from '@/utils/highlights/is-highlights-active'
+import { useAuth } from '@/context/AuthContext'
 
 export function ProductSection() {
+  const { accessToken, isAuthLoading } = useAuth()
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const productQueries = useQueries({
     queries: (categories ?? []).map((category) => ({
       queryKey: ['products', category.id],
       queryFn: () => getProducts({ categoryId: category.id }),
-      enabled: !!categories,
+      enabled: !!categories && !!accessToken && !isAuthLoading,
       retry: 1,
     })),
   })
@@ -31,12 +34,14 @@ export function ProductSection() {
     queryKey: ['promotions'],
     queryFn: getPromotions,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const { data: highlights, isLoading: isLoadingHighlights } = useQuery({
     queryKey: ['highlights'],
     queryFn: getHighlights,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const promotionsGroupedByTitle: Record<

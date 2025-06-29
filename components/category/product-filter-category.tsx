@@ -18,8 +18,10 @@ import { getHighlights } from '@/services/highlights/get-highlights'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { isHighlightActive } from '@/utils/highlights/is-highlights-active'
 import { isPromotionActive } from '@/utils/promotion/is-promotion-active'
+import { useAuth } from '@/context/AuthContext'
 
 export function ProductFilterByCategory() {
+  const { accessToken, isAuthLoading } = useAuth()
   const [categoriesOpen, setCategoriesOpen] = useState(true)
   const router = useRouter()
 
@@ -29,18 +31,21 @@ export function ProductFilterByCategory() {
     queryKey: ['categories'],
     queryFn: getCategories,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const { data: promotions } = useQuery({
     queryKey: ['promotions'],
     queryFn: getPromotions,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const { data: highlights } = useQuery({
     queryKey: ['highlights'],
     queryFn: getHighlights,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const activeHighlights = highlights?.filter(isHighlightActive)

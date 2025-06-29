@@ -12,6 +12,12 @@ import { isHighlightActive } from '@/utils/highlights/is-highlights-active'
 import { isPromotionActive } from '@/utils/promotion/is-promotion-active'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ChevronDownIcon, MenuIcon, MoreHorizontalIcon } from 'lucide-react'
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from './ui/navigation-menu'
+import { useAuth } from '@/context/AuthContext'
 
 type DropdownItem = {
   id: string
@@ -20,30 +26,45 @@ type DropdownItem = {
 }
 
 export function Navigation() {
+  const { accessToken, isAuthLoading } = useAuth()
+  const [isOpen, setIsOpen] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    setIsOpen(true)
+  }
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 200)
+  }
+
   const currentId = pathname.split('/').pop()
 
   const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const { data: promotions = [], isLoading: isLoadingPromotions } = useQuery({
     queryKey: ['promotions'],
     queryFn: getPromotions,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const { data: highlights = [], isLoading: isLoadingHighlights } = useQuery({
     queryKey: ['highlights'],
     queryFn: getHighlights,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const activePromotions = promotions.filter(isPromotionActive)
@@ -61,7 +82,6 @@ export function Navigation() {
   const handleNavigation = (id: string) => {
     const params = new URLSearchParams(searchParams.toString())
     router.push(`/categoria/${id}?${params.toString()}`)
-    setIsDropdownOpen(false)
   }
 
   const isAnyLoading =
@@ -176,61 +196,59 @@ export function Navigation() {
             </li>
 
             {/* Dropdown */}
-            <li className="relative ">
-              <div onMouseEnter={() => setIsDropdownOpen(true)}>
-                <button className=" inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
-                  <MenuIcon className="w-4 h-4" />
-                  Todas as categorias
-                  <ChevronDownIcon
-                    className={`w-4 h-4 transition-transform ${
-                      isDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem
+                  className="relative"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <button className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all">
+                    <MenuIcon className="w-4 h-4" />
+                    Todas as categorias
+                    <ChevronDownIcon
+                      className={`w-4 h-4 transition-transform ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
 
-                {isDropdownOpen && (
-                  <div
-                    onMouseLeave={() => {
-                      setTimeout(() => setIsDropdownOpen(false), 200)
-                    }}
-                    onMouseEnter={() => {
-                      setIsDropdownOpen(true)
-                    }}
-                    className="absolute right-0 z-50 mt-2 w-[1000px]  bg-white border border-gray-200 shadow-2xl rounded-lg overflow-hidden"
-                  >
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Todas as Categorias
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        Explore a ampla variedade do nosso catalógo
-                      </p>
+                  {isOpen && (
+                    <div className="absolute right-0 z-50 mt-2 w-[1000px] bg-white border border-gray-200 shadow-2xl rounded-lg overflow-hidden">
+                      <div className="p-6 border-b">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Todas as Categorias
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          Explore a ampla variedade do nosso catálogo
+                        </p>
+                      </div>
+                      <div className="px-6 py-4 max-h-[500px] overflow-y-auto grid grid-cols-5 gap-4">
+                        {groupedItems.map((column, i) => (
+                          <div key={i} className="space-y-1">
+                            {column.map((item) => (
+                              <button
+                                key={item.id}
+                                onClick={() => handleNavigation(item.id)}
+                                className="w-full cursor-pointer text-left px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md flex items-center gap-2"
+                              >
+                                {item.type === 'promotion' && (
+                                  <CustomDiamondIcon className="w-4 h-4 text-red-600 flex-shrink-0" />
+                                )}
+                                {item.type === 'highlight' && (
+                                  <CustomStarIcon className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                                )}
+                                <span>{item.name}</span>
+                              </button>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="px-6 max-h-[500px] overflow-y-auto grid grid-cols-5">
-                      {groupedItems.map((column, i) => (
-                        <div key={i} className="space-y-1">
-                          {column.map((item) => (
-                            <button
-                              key={item.id}
-                              onClick={() => handleNavigation(item.id)}
-                              className="w-full cursor-pointer text-left px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md flex items-center gap-2"
-                            >
-                              {item.type === 'promotion' && (
-                                <CustomDiamondIcon className="w-4 h-4 text-red-600 flex-shrink-0" />
-                              )}
-                              {item.type === 'highlight' && (
-                                <CustomStarIcon className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                              )}
-                              <span className="text-sm">{item.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </li>
+                  )}
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </ul>
         </div>
       </div>

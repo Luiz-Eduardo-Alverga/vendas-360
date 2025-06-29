@@ -6,14 +6,17 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { getTenant } from '@/services/tenant/get-tenant'
 import { useQuery } from '@tanstack/react-query'
+import { useAuth } from '@/context/AuthContext'
 
 export function HeroBanner() {
+  const { accessToken, isAuthLoading } = useAuth()
   const [currentSlide, setCurrentSlide] = useState(0)
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant'],
     queryFn: getTenant,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const images = tenant?.banner

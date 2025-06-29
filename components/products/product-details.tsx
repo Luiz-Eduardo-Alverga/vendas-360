@@ -15,6 +15,7 @@ import { RelatedProducts } from './related-products'
 import { ProductDetailsSkeleton } from './product-details-skeleton'
 import { getCategorie } from '@/services/categories/get-categorie'
 import { Breadcrumb } from '../breadcrumb'
+import { useAuth } from '@/context/AuthContext'
 
 const CustomTag = ({
   icon: Icon,
@@ -34,6 +35,7 @@ const CustomTag = ({
 }
 
 export default function ProductDetails({ id }: { id: string }) {
+  const { accessToken, isAuthLoading } = useAuth()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFavorite, setIsFavorite] = useState(false)
   const [productQuantities, setProductQuantities] = useState<{
@@ -55,6 +57,7 @@ export default function ProductDetails({ id }: { id: string }) {
     queryKey: ['products', id],
     queryFn: () => getProduct({ productId: id }),
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const categoryId = product?.categoryId
@@ -228,10 +231,12 @@ export default function ProductDetails({ id }: { id: string }) {
 
               {/* Product Details */}
               <div className="flex justify-between items-center mt-8 text-[12px] text-[#666666]">
-                <span>{product?.unitOfMeasure}</span>
+                <span className="text-sm">{product?.unitOfMeasure}</span>
                 <div className="flex space-x-4">
-                  <span>EAN: {product?.gtin}</span>
-                  <span>Código: {product?.externalCode}</span>
+                  <span className="text-sm">EAN: {product?.gtin}</span>
+                  <span className="text-sm">
+                    Código: {product?.externalCode}
+                  </span>
                 </div>
               </div>
 
@@ -239,15 +244,15 @@ export default function ProductDetails({ id }: { id: string }) {
               <div className="space-y-4">
                 {hasPromotion ? (
                   <div className="space-x-2 flex items-baseline">
-                    <p className="text-lg font-bold text-red-600">
+                    <p className="text-2xl font-bold text-red-600">
                       {formatCurrencyBRL(discountedPrice)}
                     </p>
-                    <p className="text-xs text-gray-500 line-through">
+                    <p className="text-lg text-gray-500 line-through">
                       {formatCurrencyBRL(product.priceDefault)}
                     </p>
                   </div>
                 ) : (
-                  <p className="text-lg font-bold">
+                  <p className="text-2xl font-bold">
                     {formatCurrencyBRL(product.priceDefault)}
                   </p>
                 )}

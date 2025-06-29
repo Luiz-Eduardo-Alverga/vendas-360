@@ -7,12 +7,16 @@ import { useQuery } from '@tanstack/react-query'
 import { getTenant } from '@/services/tenant/get-tenant'
 import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
 import { Skeleton } from './ui/skeleton'
+import { useAuth } from '@/context/AuthContext'
 
 export default function Footer() {
+  const { accessToken, isAuthLoading } = useAuth()
+
   const { data: tenant, isLoading } = useQuery({
     queryKey: ['tenant'],
     queryFn: getTenant,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   return (

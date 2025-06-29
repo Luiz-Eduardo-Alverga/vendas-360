@@ -18,6 +18,7 @@ export function UserSection() {
     queryKey: ['customer'],
     queryFn: getCustomer,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const { data: customerTotalOrders, isLoading: isCustomerTotalOrdersLoading } =

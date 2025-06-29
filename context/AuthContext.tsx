@@ -9,6 +9,7 @@ import {
 } from 'react'
 import Cookies from 'js-cookie'
 import { useQueryClient } from '@tanstack/react-query'
+import { registerLogout } from '@/utils/authHelper'
 
 interface AuthContextType {
   accessToken: string | null
@@ -36,6 +37,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAccessToken(token || null)
     setIsAuthLoading(false)
   }
+
+  useEffect(() => {
+    registerLogout(logout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     loadToken()

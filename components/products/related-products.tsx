@@ -2,16 +2,20 @@ import { getProducts } from '@/services/products/get-products'
 import { useQuery } from '@tanstack/react-query'
 import { ProductCategoryCarousel } from '../carrosel/product-category-carousel'
 import { Product } from '@/interfaces/products'
+import { useAuth } from '@/context/AuthContext'
 
 interface RelatedProductsProps {
   categoryId: string
 }
 
 export function RelatedProducts({ categoryId }: RelatedProductsProps) {
+  const { accessToken, isAuthLoading } = useAuth()
+
   const { data: products, isLoading } = useQuery({
     queryKey: ['products', categoryId],
     queryFn: () => getProducts({ categoryId }),
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   if (isLoading) {

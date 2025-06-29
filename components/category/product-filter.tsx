@@ -16,8 +16,10 @@ import { useSearchParams } from 'next/navigation'
 import { useResolvedEntity } from '@/hooks/useResolvedEntity'
 import ProductFilterSkeleton from './product-filter-skeleton'
 import ProductFilterEmptyState from './product-filter-empty-state'
+import { useAuth } from '@/context/AuthContext'
 
 export function ProductFilter({ id }: { id: string }) {
+  const { accessToken, isAuthLoading } = useAuth()
   const { addToCart, cartItems } = useCart()
   const { type, name: entityName, isLoading } = useResolvedEntity(id)
   const searchParams = useSearchParams()
@@ -72,16 +74,14 @@ export function ProductFilter({ id }: { id: string }) {
         })
       return Promise.resolve([])
     },
-    enabled: !isLoading,
+    enabled: !isLoading && !!accessToken && !isAuthLoading,
     retry: 1,
   })
 
   const maxPrice = Math.max(...(products?.map((p) => p.priceDefault) ?? []))
 
-  if (isLoadingProcuts) return <ProductFilterSkeleton />
-
   return (
-    <div className="container mx-auto pt-24 py-6">
+    <div className="container max-w-[1400px] mx-auto pt-24 py-6 px-4 border-b">
       <nav className="text-sm text-muted-foreground mb-4">
         <Breadcrumb firtsDescription="Busca" secondDescription="Produtos" />
       </nav>
@@ -105,43 +105,46 @@ export function ProductFilter({ id }: { id: string }) {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1">
-          {/* Breadcrumb */}
+        {isLoadingProcuts ? (
+          <ProductFilterSkeleton />
+        ) : (
+          <div className="flex-1">
+            {/* Breadcrumb */}
+            {/* Category Header */}
+            <div className="mb-6">
+              <div className="flex justify-between items-start mb-2">
+                <h1 className="text-2xl font-bold">{entityName}</h1>
+                <ProductFilterOrderBy />
+              </div>
 
-          {/* Category Header */}
-          <div className="mb-6">
-            <div className="flex justify-between items-start mb-2">
-              <h1 className="text-2xl font-bold">{entityName}</h1>
-              <ProductFilterOrderBy />
+              {products && products?.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  {products?.length} encontrados para a palavra chave{' '}
+                </p>
+              )}
             </div>
 
-            {products && products?.length > 0 && (
-              <p className="text-sm text-muted-foreground">
-                {products?.length} encontrados para a palavra chave{' '}
-              </p>
-            )}
-          </div>
+            {products?.length === 0 && <ProductFilterEmptyState />}
 
-          {products?.length === 0 && <ProductFilterEmptyState />}
-
-          {/* Products Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products &&
-              products.map((product) => {
-                const quantity = productQuantities[product.id] ?? 1
-                return (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    quantity={quantity}
-                    isInCart={isInCart(product.id)}
-                    onQuantityChange={handleQuantityChange}
-                    onAddToCart={addToCart}
-                  />
-                )
-              })}
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products &&
+                products.map((product) => {
+                  const quantity = productQuantities[product.id] ?? 1
+                  return (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      quantity={quantity}
+                      isInCart={isInCart(product.id)}
+                      onQuantityChange={handleQuantityChange}
+                      onAddToCart={addToCart}
+                    />
+                  )
+                })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

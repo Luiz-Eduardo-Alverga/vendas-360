@@ -14,6 +14,7 @@ import { getProductPricing } from '@/utils/promotion/get-active-promotion'
 import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
 
 interface SearchModalProps {
   isOpen: boolean
@@ -38,6 +39,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { accessToken, isAuthLoading } = useAuth()
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(-1)
@@ -54,7 +56,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   } = useQuery({
     queryKey: ['product', debouncedSearchTerm],
     queryFn: () => getProducts({ find: debouncedSearchTerm }),
-    enabled: debouncedSearchTerm.length > 2,
+    enabled: debouncedSearchTerm.length > 2 && !!accessToken && !isAuthLoading,
     retry: 1,
   })
 

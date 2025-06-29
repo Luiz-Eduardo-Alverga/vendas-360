@@ -21,7 +21,11 @@ export interface CompanyDetails {
 }
 
 export async function getTenant() {
-  const response = await api.get<CompanyDetails>('/tenant')
-
-  return response.data
+  try {
+    const response = await api.get<CompanyDetails>('/tenant')
+    return response.data
+  } catch (error) {
+    console.error('Erro ao buscar dados do tenant:', error)
+    throw error // Re-lança o erro para permitir tratamento onde a função for chamada
+  }
 }

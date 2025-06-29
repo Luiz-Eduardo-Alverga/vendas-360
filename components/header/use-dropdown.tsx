@@ -14,13 +14,14 @@ import { useAuth } from '@/context/AuthContext'
 import toast from 'react-hot-toast'
 
 export function UserDropDown() {
+  const { accessToken, isAuthLoading, logout } = useAuth()
+
   const { data: customer } = useQuery({
     queryKey: ['customer'],
     queryFn: getCustomer,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
-
-  const { logout } = useAuth()
 
   return (
     <DropdownMenu>

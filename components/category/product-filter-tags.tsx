@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuth } from '@/context/AuthContext'
 import { getTags } from '@/services/tags/get-tags'
 import {
   Collapsible,
@@ -12,6 +13,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 export function ProductFilterByTags() {
+  const { accessToken, isAuthLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -23,6 +25,7 @@ export function ProductFilterByTags() {
     queryKey: ['tags'],
     queryFn: getTags,
     retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
   })
 
   const handleTagClick = (tagName: string) => {
