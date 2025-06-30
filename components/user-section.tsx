@@ -24,14 +24,13 @@ export function UserSection() {
   const { data: customerTotalOrders, isLoading: isCustomerTotalOrdersLoading } =
     useQuery({
       queryKey: ['customerTotalOrders'],
-      queryFn: getCustomerTotalOrders,
+      queryFn: () => getCustomerTotalOrders(),
       enabled: !!accessToken,
       retry: 1,
     })
 
   const isLoading = isAuthLoading || isCustomerLoading
 
-  // Caso não venha customer (ex: usuário não cadastrado ainda)
   const noCustomerData = !isLoading && !customer
 
   return (

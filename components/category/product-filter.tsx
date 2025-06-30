@@ -119,7 +119,7 @@ export function ProductFilter({ id }: { id: string }) {
 
               {products && products?.length > 0 && (
                 <p className="text-sm text-muted-foreground">
-                  {products?.length} encontrados para a palavra chave{' '}
+                  {products?.length} produtos encontrados
                 </p>
               )}
             </div>

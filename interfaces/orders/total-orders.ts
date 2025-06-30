@@ -77,6 +77,11 @@ export interface Company {
   stateRegistration: string
 }
 
+interface PaymentTerm {
+  id: string
+  name: string
+}
+
 export interface Order {
   id: string
   orderStatus: string
@@ -95,6 +100,7 @@ export interface Order {
   salesChannel: string
   items: OrderItem[]
   payments: Payment[]
+  paymentTerm: PaymentTerm
   customer: Customer
   company: Company
 }

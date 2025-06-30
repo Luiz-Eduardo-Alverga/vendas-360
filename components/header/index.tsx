@@ -1,6 +1,6 @@
 'use client'
 
-import { Heart, SearchIcon } from 'lucide-react'
+import { Heart, HeartIcon, SearchIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { UserDropDown } from './use-dropdown'
 import { ShoppingCartSheet } from '../shoppingCart/shopping-cart'
@@ -8,19 +8,27 @@ import { useQuery } from '@tanstack/react-query'
 import { getTenant } from '@/services/tenant/get-tenant'
 import { ImageWithFallback } from '../images/image-with-fallback'
 import { Skeleton } from '../ui/skeleton'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AuthModal } from './auth-modal'
 import { useAuth } from '@/context/AuthContext'
 import { SearchModal } from '../searchProducts/search-modal'
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
 import Link from 'next/link'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import { FavoritesDropdown } from '../favorites/favorites-dropdonw'
 
 export function Header() {
+  const favoritesRef = useRef<HTMLButtonElement>(null);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const { accessToken, isAuthLoading } = useAuth()
+  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
 
   useKeyboardShortcut('k', () => setIsSearchModalOpen(true), { ctrl: true })
+
+  const handleFavoritesToggle = () => {
+    setIsFavoritesOpen(!isFavoritesOpen);
+  };
 
   const { data: tenant, isLoading } = useQuery({
     queryKey: ['tenant'],
@@ -30,7 +38,7 @@ export function Header() {
   })
 
   return (
-    <>
+    <TooltipProvider>
       <header className="fixed top-0 w-full z-50 bg-white border-b border-gray-200 px-4 py-4">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-20">
           <Link href="/" className="flex items-center space-x-2">
@@ -81,6 +89,7 @@ export function Header() {
             </button>
           </div>
 
+
           <SearchModal
             isOpen={isSearchModalOpen}
             onClose={() => setIsSearchModalOpen(false)}
@@ -90,7 +99,30 @@ export function Header() {
             <Skeleton className="h-4 w-54" />
           ) : accessToken ? (
             <div className="flex items-center space-x-6">
-              <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 hover:cursor-pointer" />
+              <div className='relative'>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        ref={favoritesRef}
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleFavoritesToggle}
+                        className="w-10 h-10 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 rounded-full"
+                      >
+                        <HeartIcon className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors duration-200" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Meus Favoritos</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <FavoritesDropdown
+                    isOpen={isFavoritesOpen}
+                    onClose={() => setIsFavoritesOpen(false)}
+                    triggerRef={favoritesRef as React.RefObject<HTMLButtonElement>}
+                  />
+              </div>
               <ShoppingCartSheet />
               <UserDropDown />
             </div>
@@ -106,6 +138,6 @@ export function Header() {
       </header>
 
       <AuthModal open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen} />
-    </>
+    </TooltipProvider>
   )
 }

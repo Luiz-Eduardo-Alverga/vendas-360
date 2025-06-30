@@ -11,6 +11,7 @@ import { Product as APIProduct, ProductPromotion } from '@/interfaces/products'
 import { ProductCategoryCarouselSkeleton } from './product-category-carousel-skeleton'
 import { isHighlightActive } from '@/utils/highlights/is-highlights-active'
 import { useAuth } from '@/context/AuthContext'
+import { isPromotionActive } from '@/utils/promotion/is-promotion-active'
 
 export function ProductSection() {
   const { accessToken, isAuthLoading } = useAuth()
@@ -30,7 +31,7 @@ export function ProductSection() {
     })),
   })
 
-  const { data: promotions, isLoading: isLoadingPromotions } = useQuery({
+  const { data: promotions = [], isLoading: isLoadingPromotions } = useQuery({
     queryKey: ['promotions'],
     queryFn: getPromotions,
     retry: 1,
@@ -49,34 +50,8 @@ export function ProductSection() {
     { id: string; products: APIProduct[] }
   > = {}
 
-  promotions?.forEach((promotion) => {
-    promotion.products.forEach((promoProd) => {
-      const productWithPromo: APIProduct = {
-        ...promoProd.product,
-        promotions: [
-          {
-            id: promotion.id,
-            name: promotion.title,
-            discount: promoProd.discount,
-            startDate: promotion.startDate,
-            endDate: promotion.endDate,
-            active: promotion.active,
-          } as ProductPromotion,
-        ],
-      }
-
-      if (!promotionsGroupedByTitle[promotion.title]) {
-        promotionsGroupedByTitle[promotion.title] = {
-          id: promotion.id,
-          products: [],
-        }
-      }
-
-      promotionsGroupedByTitle[promotion.title].products.push(productWithPromo)
-    })
-  })
-
   const activeHighlights = highlights?.filter(isHighlightActive)
+  const activePromotions = promotions.filter(isPromotionActive)
 
   if (categoriesLoading || isLoadingPromotions || isLoadingHighlights) {
     return <ProductCategoryCarouselSkeleton />
@@ -84,22 +59,20 @@ export function ProductSection() {
 
   return (
     <>
-      {Object.entries(promotionsGroupedByTitle).map(
-        ([promoTitle, { id: promoId, products: promoProducts }]) => (
-          <div
-            key={`promotion-${promoTitle}`}
-            id={slugify(promoTitle)}
-            className="scroll-mt-24"
-          >
-            <ProductCategoryCarousel
-              categoryName={promoTitle}
-              products={promoProducts}
-              isPromotion
-              categoryId={promoId}
-            />
-          </div>
-        ),
-      )}
+      {activePromotions?.map((promotion) => (
+        <div
+          key={promotion.id}
+          id={slugify(promotion.title)}
+          className="scroll-mt-24"
+        >
+          <ProductCategoryCarousel
+            categoryName={promotion.title}
+            products={promotion.products.map((hp) => hp.product)}
+            isPromotion
+            categoryId={promotion.id}
+          />
+        </div>
+      ))}
 
       {activeHighlights?.map((highlight) => (
         <div

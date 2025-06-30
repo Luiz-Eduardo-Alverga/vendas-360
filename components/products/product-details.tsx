@@ -3,8 +3,8 @@
 import { Heart, ChevronLeft, ChevronRight, Star, Tag } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { useState, ComponentType, SVGProps } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useState, ComponentType, SVGProps, useEffect } from 'react'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { getProduct } from '@/services/products/get-product'
 import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
 import { ProductQuantity } from '../carrosel/product-quantity'
@@ -16,6 +16,8 @@ import { ProductDetailsSkeleton } from './product-details-skeleton'
 import { getCategorie } from '@/services/categories/get-categorie'
 import { Breadcrumb } from '../breadcrumb'
 import { useAuth } from '@/context/AuthContext'
+import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
+
 
 const CustomTag = ({
   icon: Icon,
@@ -37,7 +39,6 @@ const CustomTag = ({
 export default function ProductDetails({ id }: { id: string }) {
   const { accessToken, isAuthLoading } = useAuth()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isFavorite, setIsFavorite] = useState(false)
   const [productQuantities, setProductQuantities] = useState<{
     [key: string]: number
   }>({})
@@ -69,6 +70,13 @@ export default function ProductDetails({ id }: { id: string }) {
     retry: 1,
   })
 
+  const productId = product?.id || ''
+
+  const { isFavorite, toggleFavorite, isLoading: isLoadingFavoritesProducts } = useFavoriteProduct(
+    productId,
+    !!accessToken && !isAuthLoading && !!productId
+  )
+
   if (isLoading) return <ProductDetailsSkeleton />
 
   if (error || !product)
@@ -91,10 +99,6 @@ export default function ProductDetails({ id }: { id: string }) {
     setCurrentImageIndex(
       (prev) => (prev - 1 + product?.images.length) % product?.images.length,
     )
-  }
-
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite)
   }
 
   return (
@@ -153,9 +157,12 @@ export default function ProductDetails({ id }: { id: string }) {
                   size="icon"
                   className="absolute top-4 right-4 z-10 bg-white rounded-full shadow-sm hover:bg-gray-50"
                   onClick={toggleFavorite}
+                  disabled={isLoadingFavoritesProducts}
                 >
                   <Heart
-                    className={`h-5 w-5 ${isFavorite ? 'text-red-500 fill-current' : ''}`}
+                    className={`h-5 w-5 transition-colors ${
+                      isFavorite ? 'text-red-500 fill-current' : 'text-gray-500 hover:text-red-500'
+                    } ${(isLoadingFavoritesProducts || isFavorite) ? 'animate-pulse' : ''}`}
                   />
                 </Button>
 

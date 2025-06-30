@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getCustomer } from '@/services/customers/get-customer'
 import { useAuth } from '@/context/AuthContext'
 import toast from 'react-hot-toast'
+import Link from 'next/link'
 
 export function UserDropDown() {
   const { accessToken, isAuthLoading, logout } = useAuth()
@@ -46,10 +47,12 @@ export function UserDropDown() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <ListOrdered className="mr-2 h-4 w-4" />
-          <span>Histórico de Pedidos</span>
-        </DropdownMenuItem>
+        <Link href="/usuario">
+          <DropdownMenuItem>    
+            <ListOrdered className="mr-2 h-4 w-4" />
+            <span>Histórico de Pedidos</span>            
+          </DropdownMenuItem>
+        </Link>
 
         <DropdownMenuSeparator />
         <DropdownMenuItem

@@ -10,6 +10,8 @@ import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
 import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
 import { CustomCartAddedIcon } from '../icon/custom-cart-added-icon'
 import { getProductPricing } from '@/utils/promotion/get-active-promotion'
+import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
+import { useAuth } from '@/context/AuthContext'  // Para pegar accessToken e isAuthLoading
 
 interface ProductCardProps {
   product: Product
@@ -26,8 +28,14 @@ export function ProductCard({
   onQuantityChange,
   onAddToCart,
 }: ProductCardProps) {
-  const { hasPromotion, promotion, discountedPrice } =
-    getProductPricing(product)
+  const { hasPromotion, promotion, discountedPrice } = getProductPricing(product)
+  const { accessToken, isAuthLoading } = useAuth()
+  
+  const {
+    isFavorite,
+    toggleFavorite,
+    isLoading: isLoadingFavoritesProducts,
+  } = useFavoriteProduct(product.id, !!accessToken && !isAuthLoading && !!product.id)
 
   return (
     <div className="flex-shrink-0" style={{ width: '300px' }}>
@@ -42,9 +50,20 @@ export function ProductCard({
             <Button
               variant="link"
               size="sm"
-              className="absolute top-0 right-0 p-1 z-10 cursor-pointer bg-white/40 hover:bg-white/50 rounded-full"
+              onClick={(e) => {
+                e.preventDefault()
+                toggleFavorite()
+              }}
+              disabled={isLoadingFavoritesProducts}
+              className="absolute top-0 right-0 p-1 z-10 cursor-pointer bg-white rounded-full shadow-sm hover:bg-gray-50"
             >
-              <Heart className="w-4 h-4" />
+              <Heart
+                className={`h-4 w-4 transition-colors ${
+                  isFavorite
+                    ? 'text-red-500 fill-current'
+                    : 'text-gray-500 hover:text-red-500'
+                } ${isLoadingFavoritesProducts ? 'animate-pulse' : ''}`}
+              />
             </Button>
           </div>
 
