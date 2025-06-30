@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  HeartIcon,
-  X,
-} from 'lucide-react'
+import { HeartIcon, X } from 'lucide-react'
 import React, { useEffect, useRef } from 'react'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -118,17 +115,15 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
             <>
               <div className="max-h-96 overflow-y-auto">
                 <div className="p-4 space-y-4">
-                {favoriteItems.map((product) => (
+                  {favoriteItems.map((product) => (
                     <FavoriteProductItem
-                        key={product.id}
-                        product={product}
-                        onAddToCart={(p) => console.log('Add to cart:', p)}
+                      key={product.id}
+                      product={product}
+                      onAddToCart={(p) => console.log('Add to cart:', p)}
                     />
-                    ))}
+                  ))}
                 </div>
               </div>
-
-              
             </>
           ) : (
             <div className="p-8 text-center">
