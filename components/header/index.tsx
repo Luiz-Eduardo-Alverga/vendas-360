@@ -1,6 +1,6 @@
 'use client'
 
-import { Heart, HeartIcon, SearchIcon } from 'lucide-react'
+import { HeartIcon, SearchIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { UserDropDown } from './use-dropdown'
 import { ShoppingCartSheet } from '../shoppingCart/shopping-cart'
@@ -14,21 +14,26 @@ import { useAuth } from '@/context/AuthContext'
 import { SearchModal } from '../searchProducts/search-modal'
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
 import Link from 'next/link'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip'
 import { FavoritesDropdown } from '../favorites/favorites-dropdonw'
 
 export function Header() {
-  const favoritesRef = useRef<HTMLButtonElement>(null);
+  const favoritesRef = useRef<HTMLButtonElement>(null)
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const { accessToken, isAuthLoading } = useAuth()
-  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
+  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false)
 
   useKeyboardShortcut('k', () => setIsSearchModalOpen(true), { ctrl: true })
 
   const handleFavoritesToggle = () => {
-    setIsFavoritesOpen(!isFavoritesOpen);
-  };
+    setIsFavoritesOpen(!isFavoritesOpen)
+  }
 
   const { data: tenant, isLoading } = useQuery({
     queryKey: ['tenant'],
@@ -89,7 +94,6 @@ export function Header() {
             </button>
           </div>
 
-
           <SearchModal
             isOpen={isSearchModalOpen}
             onClose={() => setIsSearchModalOpen(false)}
@@ -99,29 +103,31 @@ export function Header() {
             <Skeleton className="h-4 w-54" />
           ) : accessToken ? (
             <div className="flex items-center space-x-6">
-              <div className='relative'>
+              <div className="relative">
                 <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        ref={favoritesRef}
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleFavoritesToggle}
-                        className="w-10 h-10 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 rounded-full"
-                      >
-                        <HeartIcon className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors duration-200" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Meus Favoritos</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      ref={favoritesRef}
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleFavoritesToggle}
+                      className="w-10 h-10 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 rounded-full"
+                    >
+                      <HeartIcon className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors duration-200" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Meus Favoritos</p>
+                  </TooltipContent>
+                </Tooltip>
 
-                  <FavoritesDropdown
-                    isOpen={isFavoritesOpen}
-                    onClose={() => setIsFavoritesOpen(false)}
-                    triggerRef={favoritesRef as React.RefObject<HTMLButtonElement>}
-                  />
+                <FavoritesDropdown
+                  isOpen={isFavoritesOpen}
+                  onClose={() => setIsFavoritesOpen(false)}
+                  triggerRef={
+                    favoritesRef as React.RefObject<HTMLButtonElement>
+                  }
+                />
               </div>
               <ShoppingCartSheet />
               <UserDropDown />

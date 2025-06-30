@@ -14,9 +14,13 @@ interface FavoriteProductItemProps {
   onAddToCart?: (product: Product) => void
 }
 
-export function FavoriteProductItem({ product, onAddToCart }: FavoriteProductItemProps) {
-  const { isFavorite, toggleFavorite, isLoading } = useFavoriteProduct(product.id, true)
-  const { hasPromotion, discountedPrice, promotion } = getProductPricing(product)
+export function FavoriteProductItem({
+  product,
+  onAddToCart,
+}: FavoriteProductItemProps) {
+  const { toggleFavorite, isLoading } = useFavoriteProduct(product.id, true)
+  const { hasPromotion, discountedPrice, promotion } =
+    getProductPricing(product)
 
   return (
     <div
@@ -39,10 +43,14 @@ export function FavoriteProductItem({ product, onAddToCart }: FavoriteProductIte
       </div>
 
       <div className="flex-1 min-w-0">
-        <h4 className="font-medium text-gray-900 text-sm line-clamp-2 mb-1">{product.name}</h4>
+        <h4 className="font-medium text-gray-900 text-sm line-clamp-2 mb-1">
+          {product.name}
+        </h4>
         <div className="flex items-center gap-2 mb-2">
           <span className="font-bold text-red-600 text-sm">
-            {formatCurrencyBRL(hasPromotion ? discountedPrice : product.priceDefault)}
+            {formatCurrencyBRL(
+              hasPromotion ? discountedPrice : product.priceDefault,
+            )}
           </span>
           {hasPromotion && (
             <span className="text-xs text-gray-400 line-through">

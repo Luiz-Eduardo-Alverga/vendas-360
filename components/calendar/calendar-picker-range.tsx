@@ -66,7 +66,7 @@ export function CalendarPicker({ date, setDate }: CalendarPickerProps) {
         className="w-auto p-0 z-50 bg-white dark:bg-black rounded-md"
         align="start"
       >
-        <Calendar    
+        <Calendar
           mode="range"
           defaultMonth={new Date()}
           selected={date}

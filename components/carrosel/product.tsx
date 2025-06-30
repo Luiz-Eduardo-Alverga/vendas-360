@@ -11,7 +11,7 @@ import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
 import { CustomCartAddedIcon } from '../icon/custom-cart-added-icon'
 import { getProductPricing } from '@/utils/promotion/get-active-promotion'
 import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
-import { useAuth } from '@/context/AuthContext'  // Para pegar accessToken e isAuthLoading
+import { useAuth } from '@/context/AuthContext' // Para pegar accessToken e isAuthLoading
 
 interface ProductCardProps {
   product: Product
@@ -28,14 +28,18 @@ export function ProductCard({
   onQuantityChange,
   onAddToCart,
 }: ProductCardProps) {
-  const { hasPromotion, promotion, discountedPrice } = getProductPricing(product)
+  const { hasPromotion, promotion, discountedPrice } =
+    getProductPricing(product)
   const { accessToken, isAuthLoading } = useAuth()
-  
+
   const {
     isFavorite,
     toggleFavorite,
     isLoading: isLoadingFavoritesProducts,
-  } = useFavoriteProduct(product.id, !!accessToken && !isAuthLoading && !!product.id)
+  } = useFavoriteProduct(
+    product.id,
+    !!accessToken && !isAuthLoading && !!product.id,
+  )
 
   return (
     <div className="flex-shrink-0" style={{ width: '300px' }}>

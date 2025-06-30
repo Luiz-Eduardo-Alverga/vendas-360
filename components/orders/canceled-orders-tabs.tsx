@@ -1,11 +1,11 @@
 'use client'
 
-import { Order } from "@/interfaces/orders/total-orders"
-import { Download, Search } from "lucide-react"
-import { Button } from "../ui/button"
-import { TabsContent } from "../ui/tabs"
-import { OpenDetailsOrder } from "./open-details-order"
-import { OrdersEmptyState } from "./empty-state-orders"
+import { Order } from '@/interfaces/orders/total-orders'
+import { Download, Search } from 'lucide-react'
+import { Button } from '../ui/button'
+import { TabsContent } from '../ui/tabs'
+import { OpenDetailsOrder } from './open-details-order'
+import { OrdersEmptyState } from './empty-state-orders'
 
 interface Props {
   orders: Order[]
@@ -26,19 +26,36 @@ export function CanceledOrdersTabs({ orders }: Props) {
   return (
     <TabsContent value="cancelados">
       {orders.length === 0 ? (
-        <OrdersEmptyState title="Nenhum pedido cancelado" description="Você não possui pedidos cancelados no período selecionado. Isso é uma boa notícia"/>
+        <OrdersEmptyState
+          title="Nenhum pedido cancelado"
+          description="Você não possui pedidos cancelados no período selecionado. Isso é uma boa notícia"
+        />
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <table className="w-full">
             <thead className="border-b">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Número</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Itens</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chave de acesso da NF-e</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data de cancelamento</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Data
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Número
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Itens
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Total
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Chave de acesso da NF-e
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Data de cancelamento
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ações
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -67,10 +84,12 @@ export function CanceledOrdersTabs({ orders }: Props) {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.orderCanceled ? formatDate(order.orderCanceled) : '---'}
+                    {order.orderCanceled
+                      ? formatDate(order.orderCanceled)
+                      : '---'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <OpenDetailsOrder  orderId={order.id}/>
+                    <OpenDetailsOrder orderId={order.id} />
                   </td>
                 </tr>
               ))}

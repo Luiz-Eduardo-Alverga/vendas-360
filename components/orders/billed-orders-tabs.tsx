@@ -1,11 +1,11 @@
 'use client'
 
-import { Order } from "@/interfaces/orders/total-orders"
-import { Download, Search } from "lucide-react"
-import { Button } from "../ui/button"
-import { TabsContent } from "../ui/tabs"
-import { OpenDetailsOrder } from "./open-details-order"
-import { OrdersEmptyState } from "./empty-state-orders"
+import { Order } from '@/interfaces/orders/total-orders'
+import { Download, Search } from 'lucide-react'
+import { Button } from '../ui/button'
+import { TabsContent } from '../ui/tabs'
+import { OpenDetailsOrder } from './open-details-order'
+import { OrdersEmptyState } from './empty-state-orders'
 
 interface Props {
   orders: Order[]
@@ -26,8 +26,10 @@ export function BilledOrderTabs({ orders }: Props) {
   return (
     <TabsContent value="faturados">
       {orders.length === 0 ? (
-        <OrdersEmptyState title="Nenhum pedido faturado" description="Você não possui pedidos faturados no período selecionado."/>
-        
+        <OrdersEmptyState
+          title="Nenhum pedido faturado"
+          description="Você não possui pedidos faturados no período selecionado."
+        />
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <table className="w-full">
@@ -72,7 +74,9 @@ export function BilledOrderTabs({ orders }: Props) {
                     {formatCurrency(order.finalAmount)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.orderInvoice ? formatDate(order.orderInvoice) : '---'}
+                    {order.orderInvoice
+                      ? formatDate(order.orderInvoice)
+                      : '---'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <div className="flex items-center gap-2">
@@ -85,7 +89,7 @@ export function BilledOrderTabs({ orders }: Props) {
                     </div>
                   </td>
                   <td className="px-6 text-right py-4 whitespace-nowrap text-sm text-gray-900">
-                    <OpenDetailsOrder orderId={order.id}/>
+                    <OpenDetailsOrder orderId={order.id} />
                   </td>
                 </tr>
               ))}

@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { Package, ShoppingCart } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Package, ShoppingCart } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface EmptyStateProps {
   title: string
@@ -10,7 +10,12 @@ interface EmptyStateProps {
   onAction?: () => void
 }
 
-export function OrdersEmptyState({ title, description, actionText, onAction }: EmptyStateProps) {
+export function OrdersEmptyState({
+  title,
+  description,
+  actionText,
+  onAction,
+}: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4">
       <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">

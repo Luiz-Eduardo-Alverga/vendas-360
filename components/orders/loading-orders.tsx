@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface TableSkeletonProps {
   columns: number
@@ -12,7 +12,10 @@ export function LoadingOrders({ columns, rows = 5 }: TableSkeletonProps) {
     <div className="border rounded-lg overflow-hidden">
       {/* Header Skeleton */}
       <div className="bg-gray-50 px-6 py-3">
-        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
+        <div
+          className="grid gap-4"
+          style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+        >
           {Array.from({ length: columns }).map((_, index) => (
             <Skeleton key={index} className="h-4 w-20" />
           ))}
@@ -23,7 +26,10 @@ export function LoadingOrders({ columns, rows = 5 }: TableSkeletonProps) {
       <div className="bg-white divide-y divide-gray-200">
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div key={rowIndex} className="px-6 py-4">
-            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
+            <div
+              className="grid gap-4"
+              style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
+            >
               {Array.from({ length: columns }).map((_, colIndex) => (
                 <div key={colIndex} className="flex items-center">
                   {colIndex === columns - 1 ? (

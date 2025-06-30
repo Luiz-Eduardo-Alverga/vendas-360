@@ -48,9 +48,9 @@ export function UserDropDown() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <Link href="/usuario">
-          <DropdownMenuItem>    
+          <DropdownMenuItem>
             <ListOrdered className="mr-2 h-4 w-4" />
-            <span>Histórico de Pedidos</span>            
+            <span>Histórico de Pedidos</span>
           </DropdownMenuItem>
         </Link>
 

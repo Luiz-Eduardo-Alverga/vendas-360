@@ -3,8 +3,8 @@
 import { Heart, ChevronLeft, ChevronRight, Star, Tag } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { useState, ComponentType, SVGProps, useEffect } from 'react'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useState, ComponentType, SVGProps } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { getProduct } from '@/services/products/get-product'
 import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
 import { ProductQuantity } from '../carrosel/product-quantity'
@@ -17,7 +17,6 @@ import { getCategorie } from '@/services/categories/get-categorie'
 import { Breadcrumb } from '../breadcrumb'
 import { useAuth } from '@/context/AuthContext'
 import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
-
 
 const CustomTag = ({
   icon: Icon,
@@ -72,9 +71,13 @@ export default function ProductDetails({ id }: { id: string }) {
 
   const productId = product?.id || ''
 
-  const { isFavorite, toggleFavorite, isLoading: isLoadingFavoritesProducts } = useFavoriteProduct(
+  const {
+    isFavorite,
+    toggleFavorite,
+    isLoading: isLoadingFavoritesProducts,
+  } = useFavoriteProduct(
     productId,
-    !!accessToken && !isAuthLoading && !!productId
+    !!accessToken && !isAuthLoading && !!productId,
   )
 
   if (isLoading) return <ProductDetailsSkeleton />
@@ -161,8 +164,10 @@ export default function ProductDetails({ id }: { id: string }) {
                 >
                   <Heart
                     className={`h-5 w-5 transition-colors ${
-                      isFavorite ? 'text-red-500 fill-current' : 'text-gray-500 hover:text-red-500'
-                    } ${(isLoadingFavoritesProducts || isFavorite) ? 'animate-pulse' : ''}`}
+                      isFavorite
+                        ? 'text-red-500 fill-current'
+                        : 'text-gray-500 hover:text-red-500'
+                    } ${isLoadingFavoritesProducts || isFavorite ? 'animate-pulse' : ''}`}
                   />
                 </Button>
 

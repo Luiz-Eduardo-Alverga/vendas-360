@@ -7,7 +7,7 @@ import { getProducts } from '@/services/products/get-products'
 import { getPromotions } from '@/services/promotions/get-promotions'
 import { getHighlights } from '@/services/highlights/get-highlights'
 import { slugify } from '@/utils/slugify'
-import { Product as APIProduct, ProductPromotion } from '@/interfaces/products'
+import { Product as APIProduct } from '@/interfaces/products'
 import { ProductCategoryCarouselSkeleton } from './product-category-carousel-skeleton'
 import { isHighlightActive } from '@/utils/highlights/is-highlights-active'
 import { useAuth } from '@/context/AuthContext'
@@ -44,11 +44,6 @@ export function ProductSection() {
     retry: 1,
     enabled: !!accessToken && !isAuthLoading,
   })
-
-  const promotionsGroupedByTitle: Record<
-    string,
-    { id: string; products: APIProduct[] }
-  > = {}
 
   const activeHighlights = highlights?.filter(isHighlightActive)
   const activePromotions = promotions.filter(isPromotionActive)
