@@ -20,7 +20,7 @@ export default function Footer() {
   })
 
   return (
-    <footer className="bg-white pt-4 pb-2 mb-2">
+    <footer className="bg-white border-t pt-4 pb-2 mb-2">
       <div className="">
         <div className="max-w-[1250px] mx-auto flex justify-between gap-2  items-start">
           <Image

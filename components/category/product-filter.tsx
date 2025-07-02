@@ -90,7 +90,7 @@ export function ProductFilter({ id }: { id: string }) {
   const maxPrice = Math.max(...(products?.map((p) => p.priceDefault) ?? []))
 
   return (
-    <div className="container max-w-[1400px] mx-auto pt-24 py-6 px-4 border-b">
+    <div className="container max-w-[1400px] mx-auto pt-24 py-6 px-4">
       <nav className="text-sm text-muted-foreground mb-4">
         <Breadcrumb firtsDescription="Busca" secondDescription="Produtos" />
       </nav>

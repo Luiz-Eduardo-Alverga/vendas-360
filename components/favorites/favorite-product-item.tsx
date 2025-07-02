@@ -1,31 +1,30 @@
 'use client'
 
 import { Button } from '../ui/button'
-import { HeartIcon, ShoppingCartIcon } from 'lucide-react'
+import { HeartIcon } from 'lucide-react'
 import { Product } from '@/interfaces/products'
 import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
 import Image from 'next/image'
 import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
 import { getProductPricing } from '@/utils/promotion/get-active-promotion'
 import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
+import Link from 'next/link'
 
 interface FavoriteProductItemProps {
   product: Product
   onAddToCart?: (product: Product) => void
 }
 
-export function FavoriteProductItem({
-  product,
-  onAddToCart,
-}: FavoriteProductItemProps) {
+export function FavoriteProductItem({ product }: FavoriteProductItemProps) {
   const { toggleFavorite, isLoading } = useFavoriteProduct(product.id, true)
   const { hasPromotion, discountedPrice, promotion } =
     getProductPricing(product)
 
   return (
-    <div
+    <Link
+      href={`/produto/${product.id}`}
       key={product.id}
-      className="flex items-center gap-4 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow group"
+      className="flex cursor-pointer items-center gap-4 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow group"
     >
       <div className="relative">
         <Image
@@ -62,15 +61,6 @@ export function FavoriteProductItem({
 
       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button
-          size="sm"
-          onClick={() => onAddToCart?.(product)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 text-xs"
-        >
-          <ShoppingCartIcon className="w-3 h-3 mr-1" />
-          Adicionar
-        </Button>
-
-        <Button
           variant="ghost"
           size="icon"
           onClick={toggleFavorite}
@@ -84,6 +74,6 @@ export function FavoriteProductItem({
           />
         </Button>
       </div>
-    </div>
+    </Link>
   )
 }

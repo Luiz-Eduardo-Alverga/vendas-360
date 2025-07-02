@@ -1,16 +1,12 @@
 'use client'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
 
 export function OrderDetailsSkeleton() {
   return (
-    <DialogContent className="max-w-lg max-h-[90vh] min-h-[50vh] overflow-y-auto">
+    <>
       <DialogHeader>
         <div className="flex items-center justify-between pt-1">
           <div className="flex-1 flex items-center justify-between gap-3">
@@ -133,6 +129,6 @@ export function OrderDetailsSkeleton() {
           </div>
         </div>
       </div>
-    </DialogContent>
+    </>
   )
 }

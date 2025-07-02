@@ -1,5 +1,9 @@
+'use client'
+
+import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { Button } from '@/components/ui/button'
-import { ChevronRight, Trash2 } from 'lucide-react'
+import { ChevronRight, Trash2, Loader2 } from 'lucide-react'
 import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
 import {
   AlertDialog,
@@ -10,12 +14,11 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogCancel,
-  AlertDialogAction,
 } from '@/components/ui/alert-dialog'
 
 interface Props {
   totalAmount: number
-  onClearCart: () => void
+  onClearCart: () => Promise<void>
   isDisabled: boolean
   isDialogOpen: boolean
   setIsDialogOpen: (v: boolean) => void
@@ -28,6 +31,25 @@ export function ShoppingCartFooter({
   isDialogOpen,
   setIsDialogOpen,
 }: Props) {
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleClearCart = async () => {
+    setIsLoading(true)
+    try {
+      await onClearCart()
+      toast.success('Orçamento apagado com sucesso!', {
+        position: 'top-right',
+      })
+      setIsDialogOpen(false)
+    } catch (error) {
+      toast.error('Erro ao apagar o orçamento.', {
+        position: 'top-right',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="border-t p-4 space-y-4 bg-white">
       <div className="flex justify-between items-center">
@@ -66,13 +88,18 @@ export function ShoppingCartFooter({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
+            <AlertDialogCancel disabled={isLoading}>Cancelar</AlertDialogCancel>
+            <Button
               className="bg-red-500 hover:bg-red-600 text-white"
-              onClick={onClearCart}
+              onClick={handleClearCart}
+              disabled={isLoading}
             >
-              Confirmar
-            </AlertDialogAction>
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                'Confirmar'
+              )}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

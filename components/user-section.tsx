@@ -96,7 +96,7 @@ export function UserSection() {
                     <Skeleton className="w-32 h-4 mt-1" />
                   ) : (
                     <p className="font-semibold text-gray-900">
-                      {customer?.email}
+                      {customer?.user.email}
                     </p>
                   )}
                 </div>

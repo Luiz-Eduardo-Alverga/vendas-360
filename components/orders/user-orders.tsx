@@ -56,28 +56,39 @@ export default function UserOrders() {
     enabled: !!accessToken && !isAuthLoading,
   })
 
-  const ordersInProgress =
+  const filterBySearch = (list: typeof orders) => {
+    if (!searchTerm) return list ?? []
+    return (list ?? []).filter((order) =>
+      order.orderNumber.toString().includes(searchTerm),
+    )
+  }
+
+  const ordersInProgress = filterBySearch(
     orders?.filter((order) =>
       [
         'PedidoPendenteSincronizacao',
         'PedidoSincronizado',
         'PedidoEmTransporte',
       ].includes(order.orderStatus),
-    ) ?? []
+    ),
+  )
 
-  const ordersBilled =
-    orders?.filter((order) => order.orderStatus === 'PedidoFaturado') ?? []
+  const ordersBilled = filterBySearch(
+    orders?.filter((order) => order.orderStatus === 'PedidoFaturado'),
+  )
 
-  const ordersFinished =
+  const ordersFinished = filterBySearch(
     orders?.filter((order) =>
       ['PedidoEntregue', 'PedidoFinalizado'].includes(order.orderStatus),
-    ) ?? []
+    ),
+  )
 
-  const ordersCanceled =
-    orders?.filter((order) => order.orderStatus === 'PedidoCancelado') ?? []
+  const ordersCanceled = filterBySearch(
+    orders?.filter((order) => order.orderStatus === 'PedidoCancelado'),
+  )
 
   return (
-    <div className="container min-h-screen mx-auto px-4 pb-6 mt-24  max-w-7xl border-b">
+    <div className="container min-h-screen mx-auto px-4 pb-6 mt-24  max-w-7xl ">
       {/* Breadcrumb */}
       <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
         <Breadcrumb
@@ -129,7 +140,7 @@ export default function UserOrders() {
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              placeholder="Pesquise o número do pedido ou nome da loja"
+              placeholder="Pesquise o número do pedido"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"

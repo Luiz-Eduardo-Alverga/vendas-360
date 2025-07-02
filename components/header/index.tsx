@@ -2,7 +2,7 @@
 
 import { HeartIcon, SearchIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { UserDropDown } from './use-dropdown'
+import { UserDropDown } from './user-dropdown'
 import { ShoppingCartSheet } from '../shoppingCart/shopping-cart'
 import { useQuery } from '@tanstack/react-query'
 import { getTenant } from '@/services/tenant/get-tenant'
