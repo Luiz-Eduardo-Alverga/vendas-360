@@ -11,23 +11,28 @@ import { normalizeImageUrl } from '@/utils/prodcuts/normalize-image-url'
 import { CustomCartAddedIcon } from '../icon/custom-cart-added-icon'
 import { getProductPricing } from '@/utils/promotion/get-active-promotion'
 import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
-import { useAuth } from '@/context/AuthContext' // Para pegar accessToken e isAuthLoading
+import { useAuth } from '@/context/AuthContext'
+import { useAddToCart } from '@/hooks/useAddToCart'
 
 interface ProductCardProps {
   product: Product
   quantity: number
-  isInCart: boolean
+  currentQuantity?: number
+  orderItemId?: string // 👈 Novo campo necessário
+  isInCart?: boolean
   onQuantityChange: (productId: string, newQty: number) => void
-  onAddToCart: (product: Product, quantity: number) => void
 }
 
 export function ProductCard({
   product,
   quantity,
   isInCart,
+  currentQuantity,
+  orderItemId,
   onQuantityChange,
-  onAddToCart,
 }: ProductCardProps) {
+  const { addToCart, isLoading } = useAddToCart()
+
   const { hasPromotion, promotion, discountedPrice } =
     getProductPricing(product)
   const { accessToken, isAuthLoading } = useAuth()
@@ -129,13 +134,20 @@ export function ProductCard({
           <div className="flex-1">
             <Button
               className="w-full h-full rounded-sm cursor-pointer"
-              onClick={() => {
-                onAddToCart(product, quantity)
+              onClick={async () => {
+                await addToCart({
+                  product,
+                  quantity,
+                  orderItemId,
+                  currentQuantity,
+                })
+
                 onQuantityChange(product.id, 1)
               }}
+              disabled={isLoading}
             >
-              <ShoppingCart />
-              Adicionar
+              <ShoppingCart className="mr-1" />
+              {isLoading ? 'Adicionando...' : 'Adicionar'}
             </Button>
           </div>
         </div>

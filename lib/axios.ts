@@ -33,6 +33,7 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     if (error.response?.status === 401) {
       callLogout()
+      window.location.href = '/'
     }
 
     return Promise.reject(error)

@@ -9,6 +9,7 @@ export function registerLogout(fn: () => void) {
 export function callLogout() {
   if (logoutFn) {
     logoutFn()
+    window.location.href = '/'
   } else {
     console.warn('logout não registrado')
   }

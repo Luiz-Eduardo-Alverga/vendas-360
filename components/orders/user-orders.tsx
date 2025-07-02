@@ -18,6 +18,7 @@ import { DateRange } from 'react-day-picker'
 import { CalendarPicker } from '../calendar/calendar-picker-range'
 import { LoadingOrders } from './loading-orders'
 import { useAuth } from '@/context/AuthContext'
+import { LoadingOrdersTabs } from './loading-orders-tabs'
 
 export default function UserOrders() {
   const { accessToken, isAuthLoading } = useAuth()
@@ -58,7 +59,6 @@ export default function UserOrders() {
   const ordersInProgress =
     orders?.filter((order) =>
       [
-        'EmOrcamento',
         'PedidoPendenteSincronizacao',
         'PedidoSincronizado',
         'PedidoEmTransporte',
@@ -101,24 +101,28 @@ export default function UserOrders() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-6">
-          <TabsTrigger value="andamento" className="flex items-center gap-2">
-            Pedidos em andamento
-            <Badge variant="secondary">{ordersInProgress.length}</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="faturados" className="flex items-center gap-2">
-            Faturados
-            <Badge variant="secondary">{ordersBilled.length}</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="concluidos" className="flex items-center gap-2">
-            Concluídos
-            <Badge variant="secondary">{ordersFinished.length}</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="cancelados" className="flex items-center gap-2">
-            Cancelados
-            <Badge variant="secondary">{ordersCanceled.length}</Badge>
-          </TabsTrigger>
-        </TabsList>
+        {isLoadingOrders ? (
+          <LoadingOrdersTabs />
+        ) : (
+          <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsTrigger value="andamento" className="flex items-center gap-2">
+              Pedidos em andamento
+              <Badge variant="secondary">{ordersInProgress.length}</Badge>
+            </TabsTrigger>
+            <TabsTrigger value="faturados" className="flex items-center gap-2">
+              Faturados
+              <Badge variant="secondary">{ordersBilled.length}</Badge>
+            </TabsTrigger>
+            <TabsTrigger value="concluidos" className="flex items-center gap-2">
+              Concluídos
+              <Badge variant="secondary">{ordersFinished.length}</Badge>
+            </TabsTrigger>
+            <TabsTrigger value="cancelados" className="flex items-center gap-2">
+              Cancelados
+              <Badge variant="secondary">{ordersCanceled.length}</Badge>
+            </TabsTrigger>
+          </TabsList>
+        )}
 
         {/* Search and Filters */}
         <div className="flex justify-between items-center mb-2">

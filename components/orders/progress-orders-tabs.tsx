@@ -69,7 +69,7 @@ export function ProgressOrderTab({ orders }: Props) {
                     {formatCurrency(order.finalAmount)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.payments[0]?.paymentMethodName || '---'}
+                    {order.paymentTerm ? order.paymentTerm.name : ''}
                   </td>
                   <td className="px-6 py-4 text-right whitespace-nowrap text-sm text-gray-900 cursor-pointer">
                     <OpenDetailsOrder orderId={order.id} />

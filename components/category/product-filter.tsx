@@ -6,7 +6,6 @@ import { Separator } from '@/components/ui/separator'
 import { useQuery } from '@tanstack/react-query'
 import { getProducts } from '@/services/products/get-products'
 import { ProductCard } from '../carrosel/product'
-import { useCart } from '@/context/cart-context'
 import { Breadcrumb } from '../breadcrumb'
 import { ProductFilterByCategory } from './product-filter-category'
 import { ProductFilterByTags } from './product-filter-tags'
@@ -17,10 +16,10 @@ import { useResolvedEntity } from '@/hooks/useResolvedEntity'
 import ProductFilterSkeleton from './product-filter-skeleton'
 import ProductFilterEmptyState from './product-filter-empty-state'
 import { useAuth } from '@/context/AuthContext'
+import { getShoppingCartOrder } from '@/services/shoppingCart/get-shopping-cart-order'
 
 export function ProductFilter({ id }: { id: string }) {
   const { accessToken, isAuthLoading } = useAuth()
-  const { addToCart, cartItems } = useCart()
   const { type, name: entityName, isLoading } = useResolvedEntity(id)
   const searchParams = useSearchParams()
   const [productQuantities, setProductQuantities] = useState<{
@@ -41,9 +40,6 @@ export function ProductFilter({ id }: { id: string }) {
       [productId]: Math.max(1, newQty),
     }))
   }
-
-  const isInCart = (productId: string) =>
-    cartItems.some((item) => item.product.id === productId)
 
   const { data: products, isLoading: isLoadingProcuts } = useQuery({
     queryKey: ['products', id, tag, priceMax, priceMin, orderBy],
@@ -76,6 +72,19 @@ export function ProductFilter({ id }: { id: string }) {
     },
     enabled: !isLoading && !!accessToken && !isAuthLoading,
     retry: 1,
+  })
+
+  const { data } = useQuery({
+    queryKey: ['shoppingCartOrder'],
+    queryFn: () =>
+      getShoppingCartOrder({
+        orderStatus: 'EmOrcamento',
+        startDate: '2000-04-12T04:53:57.844Z',
+        finishDate: '2050-04-12T04:53:57.844Z',
+        withProductsAndPayments: true,
+      }),
+    retry: 1,
+    enabled: !isLoading && !!accessToken && !isAuthLoading,
   })
 
   const maxPrice = Math.max(...(products?.map((p) => p.priceDefault) ?? []))
@@ -131,14 +140,18 @@ export function ProductFilter({ id }: { id: string }) {
               {products &&
                 products.map((product) => {
                   const quantity = productQuantities[product.id] ?? 1
+                  const itemInCart = data?.[0]?.items.find(
+                    (item) => item.product.id === product.id,
+                  )
                   return (
                     <ProductCard
                       key={product.id}
                       product={product}
                       quantity={quantity}
-                      isInCart={isInCart(product.id)}
+                      isInCart={!!itemInCart}
+                      currentQuantity={itemInCart?.quantity}
+                      orderItemId={itemInCart?.id}
                       onQuantityChange={handleQuantityChange}
-                      onAddToCart={addToCart}
                     />
                   )
                 })}

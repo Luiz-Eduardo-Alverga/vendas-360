@@ -3,7 +3,17 @@
 import { Product } from '@/interfaces/products'
 
 export function getActivePromotion(product: Product) {
-  return product.promotions.find((promo) => promo.active && promo.discount > 0)
+  const now = new Date()
+
+  return (
+    product.promotions &&
+    product.promotions.find((promo) => {
+      const start = new Date(promo.startDate)
+      const end = new Date(promo.endDate)
+
+      return promo.active && promo.discount > 0 && now >= start && now <= end
+    })
+  )
 }
 
 export function calculateDiscountedPrice(

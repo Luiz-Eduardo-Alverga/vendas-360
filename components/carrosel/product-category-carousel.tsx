@@ -5,10 +5,12 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CustomDiamondIcon } from '../icon/custom-diamond-icon'
 import { Product } from '@/interfaces/products'
-import { useCart } from '@/context/cart-context'
 import { CustomStarIcon } from '../icon/custor-star-icon'
 import { ProductCard } from './product'
 import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
+import { getShoppingCartOrder } from '@/services/shoppingCart/get-shopping-cart-order'
+import { useAuth } from '@/context/AuthContext'
 
 interface CategoryProps {
   categoryId?: string
@@ -27,15 +29,26 @@ export function ProductCategoryCarousel({
   isShowAllButtonVisible = true,
   categoryId,
 }: CategoryProps) {
-  const { addToCart, cartItems } = useCart()
+  const { accessToken, isAuthLoading } = useAuth()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [productQuantities, setProductQuantities] = useState<{
     [key: string]: number
   }>({})
   const itemsPerView = 4
 
-  const isInCart = (productId: string) =>
-    cartItems.some((item) => item.product.id === productId)
+  const { data } = useQuery({
+    queryKey: ['shoppingCartOrder'],
+    queryFn: () =>
+      getShoppingCartOrder({
+        orderStatus: 'EmOrcamento',
+        startDate: '2000-04-12T04:53:57.844Z',
+        finishDate: '2050-04-12T04:53:57.844Z',
+        withProductsAndPayments: true,
+        salesChannel: 'EcommerceB2b',
+      }),
+    retry: 1,
+    enabled: !!accessToken && !isAuthLoading,
+  })
 
   const handleQuantityChange = (productId: string, newQty: number) => {
     setProductQuantities((prev) => ({
@@ -94,14 +107,18 @@ export function ProductCategoryCarousel({
             >
               {products.map((product) => {
                 const quantity = productQuantities[product.id] ?? 1
+                const itemInCart = data?.[0]?.items.find(
+                  (item) => item.product.id === product.id,
+                )
                 return (
                   <ProductCard
                     key={product.id}
                     product={product}
                     quantity={quantity}
-                    isInCart={isInCart(product.id)}
+                    isInCart={!!itemInCart}
+                    currentQuantity={itemInCart?.quantity}
+                    orderItemId={itemInCart?.id}
                     onQuantityChange={handleQuantityChange}
-                    onAddToCart={addToCart}
                   />
                 )
               })}
