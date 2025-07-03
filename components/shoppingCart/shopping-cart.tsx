@@ -13,9 +13,12 @@ import { useQuery } from '@tanstack/react-query'
 import { getShoppingCartOrder } from '@/services/shoppingCart/get-shopping-cart-order'
 import { formatCurrencyBRL } from '@/utils/prodcuts/format-currency-BRL'
 import { useAuth } from '@/context/AuthContext'
+import { ShoppingCartPayments } from './shopping-cart-payments'
+import { useState } from 'react'
 
 export function ShoppingCartSheet() {
   const { accessToken, isAuthLoading } = useAuth()
+  const [view, setView] = useState<'items' | 'payment'>('items')
 
   const { data } = useQuery({
     queryKey: ['shoppingCartOrder'],
@@ -60,10 +63,21 @@ export function ShoppingCartSheet() {
           </SheetTitle>
         </SheetHeader>
 
-        {data && data[0] ? (
-          <ShoppingCartItems items={data[0].items} />
+        {view === 'items' ? (
+          data && data[0] ? (
+            <ShoppingCartItems
+              totalAmount={totalAmount || 0}
+              items={data[0].items}
+              goToPayment={() => setView('payment')}
+            />
+          ) : (
+            <p className="p-4 text-sm text-gray-500">Carrinho vazio</p>
+          )
         ) : (
-          <p className="p-4 text-sm text-gray-500">Carrinho vazio</p>
+          <ShoppingCartPayments
+            totalAmount={totalAmount || 0}
+            onGoBack={() => setView('items')}
+          />
         )}
       </SheetContent>
     </Sheet>

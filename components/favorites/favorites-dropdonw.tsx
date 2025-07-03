@@ -1,7 +1,8 @@
 'use client'
 
 import { HeartIcon, X } from 'lucide-react'
-import React, { useEffect, useRef } from 'react'
+import type React from 'react'
+import { useEffect, useRef } from 'react'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
@@ -9,8 +10,9 @@ import { useQuery, useQueries } from '@tanstack/react-query'
 import { getCustomer } from '@/services/customers/get-customer'
 import { useAuth } from '@/context/AuthContext'
 import { getProduct } from '@/services/products/get-product'
-import { Product } from '@/interfaces/products'
+import type { Product } from '@/interfaces/products'
 import { FavoriteProductItem } from './favorite-product-item'
+import { FavoritesDropdownLoading } from './favorites-dropdonw-skeleton'
 
 interface FavoritesDropdownProps {
   isOpen: boolean
@@ -26,7 +28,7 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
   const { accessToken, isAuthLoading } = useAuth()
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  const { data: customerData } = useQuery({
+  const { data: customerData, isLoading: isCustomerLoading } = useQuery({
     queryKey: ['customer'],
     queryFn: getCustomer,
     enabled: !!accessToken && !isAuthLoading,
@@ -39,13 +41,18 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
     queries: favoriteIds.map((id) => ({
       queryKey: ['product', id],
       queryFn: () => getProduct({ productId: id }),
-      enabled: !!accessToken && !isAuthLoading && favoriteIds.length > 0,
+      enabled:
+        !!accessToken && !isAuthLoading && favoriteIds.length > 0 && isOpen,
     })),
   })
 
   const favoriteItems = favoriteProductsQueries
     .map((query) => query.data)
     .filter(Boolean) as Product[]
+
+  const isLoadingProducts = favoriteProductsQueries.some(
+    (query) => query.isLoading,
+  )
 
   // Handle click outside
   useEffect(() => {
@@ -80,6 +87,17 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
+
+  // Show loading state
+  if (isCustomerLoading || isLoadingProducts) {
+    return (
+      <FavoritesDropdownLoading
+        isOpen={isOpen}
+        onClose={onClose}
+        triggerRef={triggerRef}
+      />
+    )
+  }
 
   if (!isOpen) return null
 
@@ -120,6 +138,7 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
                       key={product.id}
                       product={product}
                       onAddToCart={(p) => console.log('Add to cart:', p)}
+                      onClose={onClose}
                     />
                   ))}
                 </div>

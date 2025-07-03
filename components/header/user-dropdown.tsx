@@ -4,7 +4,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import Image from 'next/image'
-import { LogOutIcon, MapPinIcon, ShoppingBagIcon, X } from 'lucide-react'
+import { LogOutIcon, ShoppingBagIcon, X } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { getCustomer } from '@/services/customers/get-customer'
 import { useAuth } from '@/context/AuthContext'
@@ -25,12 +25,12 @@ const menuItems = [
     description: 'Acompanhe seus pedidos',
     onClick: () => console.log('Navigate to orders'),
   },
-  {
-    icon: MapPinIcon,
-    label: 'Endereços',
-    description: 'Gerencie seus endereços',
-    onClick: () => console.log('Navigate to addresses'),
-  },
+  // {
+  //   icon: MapPinIcon,
+  //   label: 'Endereços',
+  //   description: 'Gerencie seus endereços',
+  //   onClick: () => console.log('Navigate to addresses'),
+  // },
 ]
 
 export function UserDropDown() {

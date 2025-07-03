@@ -14,9 +14,15 @@ import { EmptyShoppingCart } from './empty-shopping-cart'
 
 interface Props {
   items: OrderItem[]
+  totalAmount: number
+  goToPayment?: () => void
 }
 
-export default function ShoppingCartItems({ items }: Props) {
+export default function ShoppingCartItems({
+  items,
+  totalAmount,
+  goToPayment,
+}: Props) {
   const queryClient = useQueryClient()
   const { addToCart, isLoading: isUpdatingQuantity } = useAddToCart()
 
@@ -66,11 +72,6 @@ export default function ShoppingCartItems({ items }: Props) {
     }, 600)
   }
 
-  const totalAmount = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  )
-
   const handleDeleteAllItems = async () => {
     await Promise.all(
       items.map((item) => deleteItemFromShoppingCart({ orderItemId: item.id })),
@@ -112,6 +113,8 @@ export default function ShoppingCartItems({ items }: Props) {
         onClearCart={handleDeleteAllItems}
         isDialogOpen={isDialogOpen}
         setIsDialogOpen={setIsDialogOpen}
+        onConfirm={goToPayment}
+        isInPaymentSheet={false}
       />
     </>
   )

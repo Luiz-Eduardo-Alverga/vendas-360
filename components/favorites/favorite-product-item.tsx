@@ -13,9 +13,13 @@ import Link from 'next/link'
 interface FavoriteProductItemProps {
   product: Product
   onAddToCart?: (product: Product) => void
+  onClose?: () => void
 }
 
-export function FavoriteProductItem({ product }: FavoriteProductItemProps) {
+export function FavoriteProductItem({
+  product,
+  onClose,
+}: FavoriteProductItemProps) {
   const { toggleFavorite, isLoading } = useFavoriteProduct(product.id, true)
   const { hasPromotion, discountedPrice, promotion } =
     getProductPricing(product)
@@ -23,6 +27,7 @@ export function FavoriteProductItem({ product }: FavoriteProductItemProps) {
   return (
     <Link
       href={`/produto/${product.id}`}
+      onClick={onClose}
       key={product.id}
       className="flex cursor-pointer items-center gap-4 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow group"
     >

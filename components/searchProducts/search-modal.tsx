@@ -191,7 +191,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   const renderContent = () => {
     if (!searchTerm.trim() && !hasSearched) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-0 flex-1 px-6 text-center">
+        <div className="flex  flex-col items-center justify-center min-h-0 flex-1 px-6 text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-full flex items-center justify-center">
             <Search className="w-8 h-8 text-blue-500" />
           </div>
@@ -378,7 +378,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           >
             <X className="w-5 h-5 text-gray-600" />
           </button>
-          <div className="relative flex-1">
+          <div className="relative flex-1 cursor-pointer">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <Input
               placeholder="Busque aqui o seu produto"
@@ -411,7 +411,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           </button>
           <DialogHeader className="p-6 pb-4 border-b border-gray-100">
             <DialogTitle className="sr-only">Buscar produtos</DialogTitle>
-            <div className="relative pr-12">
+            <div className="relative pr-12 cursor-pointer">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 placeholder="Busque aqui o seu produto"

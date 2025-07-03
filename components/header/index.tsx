@@ -80,7 +80,7 @@ export function Header() {
             {/* Search Bar - Desktop */}
             <button
               onClick={() => setIsSearchModalOpen(true)}
-              className="flex w-full items-center gap-4 px-4 py-2.5 relative bg-[#f8f9fa] hover:bg-[#f1f3f4] transition-colors duration-200 rounded-lg border border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:border-blue-300 group"
+              className="flex cursor-pointer w-full items-center gap-4 px-4 py-2.5 relative bg-[#f8f9fa] hover:bg-[#f1f3f4] transition-colors duration-200 rounded-lg border border-gray-200 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:border-blue-300 group"
             >
               <SearchIcon className="w-5 h-5 text-gray-400 group-hover:text-gray-500 transition-colors duration-200 flex-shrink-0" />
               <div className="relative flex-1 font-normal text-gray-600 text-sm text-left">
@@ -111,7 +111,7 @@ export function Header() {
                       variant="ghost"
                       size="icon"
                       onClick={handleFavoritesToggle}
-                      className="w-10 h-10 hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 rounded-full"
+                      className="w-10 h-10 cursor-pointer hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 rounded-full"
                     >
                       <HeartIcon className="w-5 h-5 text-gray-600 hover:text-red-500 transition-colors duration-200" />
                     </Button>
