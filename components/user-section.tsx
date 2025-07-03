@@ -117,7 +117,9 @@ export function UserSection() {
                       <p className="text-xs text-gray-600">
                         Você possui{' '}
                         <span className="font-semibold">
-                          {customer?.favoritesProducts.length}
+                          {Array.isArray(customer?.favoritesProducts)
+                            ? customer.favoritesProducts.length
+                            : 0}
                         </span>{' '}
                         produto(s) favorito(s)!
                       </p>

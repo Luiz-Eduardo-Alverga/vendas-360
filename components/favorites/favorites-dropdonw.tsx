@@ -1,37 +1,57 @@
 'use client'
 
 import { HeartIcon, X } from 'lucide-react'
+
 import type React from 'react'
+
 import { useEffect, useRef } from 'react'
+
 import { Badge } from '../ui/badge'
+
 import { Button } from '../ui/button'
+
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+
 import { useQuery, useQueries } from '@tanstack/react-query'
+
 import { getCustomer } from '@/services/customers/get-customer'
+
 import { useAuth } from '@/context/AuthContext'
+
 import { getProduct } from '@/services/products/get-product'
+
 import type { Product } from '@/interfaces/products'
+
 import { FavoriteProductItem } from './favorite-product-item'
+
 import { FavoritesDropdownLoading } from './favorites-dropdonw-skeleton'
 
 interface FavoritesDropdownProps {
   isOpen: boolean
+
   onClose: () => void
+
   triggerRef: React.RefObject<HTMLButtonElement>
 }
 
 export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
   isOpen,
+
   onClose,
+
   triggerRef,
 }) => {
   const { accessToken, isAuthLoading } = useAuth()
+
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const { data: customerData, isLoading: isCustomerLoading } = useQuery({
     queryKey: ['customer'],
+
     queryFn: getCustomer,
+
     enabled: !!accessToken && !isAuthLoading,
+
     retry: 1,
   })
 
@@ -40,14 +60,18 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
   const favoriteProductsQueries = useQueries({
     queries: favoriteIds.map((id) => ({
       queryKey: ['product', id],
+
       queryFn: () => getProduct({ productId: id }),
+
       enabled:
         !!accessToken && !isAuthLoading && favoriteIds.length > 0 && isOpen,
     })),
   })
 
   const favoriteItems = favoriteProductsQueries
+
     .map((query) => query.data)
+
     .filter(Boolean) as Product[]
 
   const isLoadingProducts = favoriteProductsQueries.some(
@@ -55,6 +79,7 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
   )
 
   // Handle click outside
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -77,6 +102,7 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
   }, [isOpen, onClose, triggerRef])
 
   // Handle escape key
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -85,10 +111,12 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
     }
 
     document.addEventListener('keydown', handleEscape)
+
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
 
   // Show loading state
+
   if (isCustomerLoading || isLoadingProducts) {
     return (
       <FavoritesDropdownLoading
@@ -113,10 +141,12 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
               <CardTitle className="text-lg font-semibold text-gray-900">
                 Meus Favoritos
               </CardTitle>
+
               <Badge className="bg-gray-100 text-gray-700 text-xs">
                 {favoriteItems.length}
               </Badge>
             </div>
+
             <Button
               variant="ghost"
               size="icon"
@@ -149,9 +179,11 @@ export const FavoritesDropdown: React.FC<FavoritesDropdownProps> = ({
               <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                 <HeartIcon className="w-8 h-8 text-gray-400" />
               </div>
+
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 Nenhum favorito ainda
               </h3>
+
               <p className="text-gray-600 text-sm">
                 Adicione produtos aos seus favoritos para vê-los aqui
               </p>

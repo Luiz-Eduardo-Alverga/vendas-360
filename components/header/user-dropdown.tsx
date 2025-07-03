@@ -122,7 +122,9 @@ export function UserDropDown() {
                   </div>
                   <div className="text-center p-3 bg-white/50 rounded-lg">
                     <div className="text-xl font-bold text-red-600 mb-1">
-                      {customer?.favoritesProducts.length}
+                      {Array.isArray(customer?.favoritesProducts)
+                        ? customer.favoritesProducts.length
+                        : 0}
                     </div>
                     <div className="text-xs text-gray-600">
                       Produtos favoritos
